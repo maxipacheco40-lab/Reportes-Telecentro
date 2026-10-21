@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte de demanda — Canal Digital</title>
+<style>
+  :root{
+    --bg:#f5f6f8;
+    --card:#ffffff;
+    --border:#e1e3e8;
+    --text:#1a1d24;
+    --text-muted:#6b7280;
+    --accent:#2a5fd6;
+    --accent-light:#e8eefb;
+    --warn:#c9760e;
+    --warn-light:#fdf1e0;
+    --danger:#c0392b;
+    --danger-light:#fbeae8;
+    --good:#0f7a4a;
+    --good-light:#e6f5ee;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:32px 24px 64px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+  header{margin-bottom:24px;}
+  .brand-header{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:20px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--border);
+  }
+  .brand-logo{height:36px;width:auto;display:block;}
+  .brand-titles{display:flex;flex-direction:column;}
+  h1{font-size:22px;font-weight:600;margin:0 0 4px;}
+  .subtitle{color:var(--text-muted);font-size:14px;margin:0;}
+
+  .main-tabs{
+    display:flex;
+    gap:4px;
+    margin-bottom:24px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:4px;
+  }
+  .main-tab{
+    appearance:none;
+    border:none;
+    background:none;
+    flex:1;
+    padding:10px 12px;
+    font-size:14px;
+    font-weight:600;
+    color:var(--text-muted);
+    cursor:pointer;
+    border-radius:8px;
+    transition:all .15s;
+  }
+  .main-tab:hover{color:var(--text);background:#fafbfc;}
+  .main-tab.active{color:#fff;background:var(--accent);}
+
+  .month-tabs{
+    display:flex;
+    gap:8px;
+    margin:24px 0 20px;
+    border-bottom:1px solid var(--border);
+    flex-wrap:wrap;
+  }
+  .month-tab{
+    appearance:none;
+    border:none;
+    background:none;
+    padding:10px 4px;
+    font-size:15px;
+    font-weight:500;
+    color:var(--text-muted);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    margin-right:20px;
+    transition:color .15s;
+  }
+  .month-tab:hover{color:var(--text);}
+  .month-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:24px;
+  }
+  .kpi{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px 16px;
+  }
+  .kpi .label{font-size:12px;color:var(--text-muted);margin:0 0 4px;}
+  .kpi .value{font-size:20px;font-weight:600;margin:0;}
+
+  .section-title{
+    font-size:14px;
+    font-weight:600;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    margin:0 0 10px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    font-size:13.5px;
+  }
+  thead th{
+    text-align:left;
+    padding:10px 12px;
+    background:#f0f2f5;
+    color:var(--text-muted);
+    font-weight:600;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    border-bottom:1px solid var(--border);
+  }
+  thead th.num, td.num{text-align:right;}
+  tbody td{
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#fafbfc;}
+  td.cola{font-weight:500;}
+  .pill{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+  }
+  .pill.good{background:var(--good-light);color:var(--good);}
+  .pill.warn{background:var(--warn-light);color:var(--warn);}
+  .pill.danger{background:var(--danger-light);color:var(--danger);}
+  tfoot td{
+    padding:10px 12px;
+    font-weight:600;
+    background:#f7f8fa;
+    border-top:1px solid var(--border);
+  }
+
+  .day-picker-wrap{margin-top:32px;}
+  .day-picker{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:16px;
+  }
+  .day-pill{
+    appearance:none;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    font-size:12.5px;
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .12s;
+  }
+  .day-pill:hover{border-color:var(--accent);}
+  .day-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .day-pill.weekend{color:var(--text-muted);}
+  .day-pill.active.weekend{color:#fff;}
+
+  .note{
+    font-size:12.5px;
+    color:var(--text-muted);
+    margin-top:10px;
+    line-height:1.5;
+  }
+  .empty-state{
+    padding:24px;
+    text-align:center;
+    color:var(--text-muted);
+    font-size:13.5px;
+  }
+
+  .avg-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:0;
+  }
+  .avg-total-row{
+    display:flex;
+    align-items:flex-end;
+    gap:28px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .avg-total-item{text-align:left;}
+  .avg-total-item .m-label{font-size:12px;color:var(--text-muted);margin:0 0 2px;}
+  .avg-total-item .m-value{font-size:22px;font-weight:600;margin:0;}
+  .avg-total-item .m-delta{font-size:12px;font-weight:600;margin:2px 0 0;}
+  .avg-total-item .m-delta.up{color:var(--good);}
+  .avg-total-item .m-delta.down{color:var(--danger);}
+  .avg-total-item .m-days{font-size:11px;color:var(--text-muted);margin:2px 0 0;}
+
+  .avg-details, .db-details{margin-bottom:24px;}
+  .avg-details summary, .db-details summary{
+    cursor:pointer;
+    font-size:14px;
+    font-weight:600;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    padding:4px 0 10px;
+    list-style:none;
+    user-select:none;
+  }
+  .avg-details summary::-webkit-details-marker, .db-details summary::-webkit-details-marker{display:none;}
+  .avg-details summary::before, .db-details summary::before{
+    content:"▸ ";
+    display:inline-block;
+    transition:transform .12s;
+  }
+  .avg-details[open] summary::before, .db-details[open] summary::before{
+    content:"▾ ";
+  }
+
+  .db-panel{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 18px;
+  }
+  .dropzone{
+    border:2px dashed var(--border);
+    border-radius:var(--radius);
+    padding:24px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .15s;
+    background:#fafbfc;
+  }
+  .dropzone:hover{border-color:var(--accent);background:var(--accent-light);}
+  .dropzone.dragover{border-color:var(--accent);background:var(--accent-light);}
+  .dropzone p{margin:0;font-size:13.5px;color:var(--text-muted);}
+  .dropzone strong{color:var(--text);}
+  .db-status{
+    font-size:13px;
+    margin-top:12px;
+    min-height:18px;
+    color:var(--text-muted);
+  }
+  .db-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:12px;
+  }
+  .db-download-btn{
+    appearance:none;
+    border:1px solid var(--accent);
+    background:var(--accent);
+    color:#fff;
+    font-size:13px;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:opacity .15s;
+  }
+  .db-download-btn:disabled{
+    background:var(--border);
+    border-color:var(--border);
+    color:var(--text-muted);
+    cursor:not-allowed;
+  }
+
+  .open-months-title{
+    font-size:12px;
+    font-weight:600;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    margin:16px 0 8px;
+  }
+  .open-months-warning{
+    background:var(--warn-light);
+    color:var(--warn);
+    font-size:13px;
+    padding:8px 12px;
+    border-radius:8px;
+    margin-bottom:8px;
+  }
+  .open-month-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 0;
+    border-bottom:1px solid var(--border);
+    font-size:13.5px;
+  }
+  .open-month-row:last-child{border-bottom:none;}
+  .open-month-name{font-weight:500;min-width:90px;}
+  .open-month-count{color:var(--text-muted);flex:1;}
+  .close-month-btn{
+    appearance:none;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    font-size:12.5px;
+    padding:5px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .12s;
+  }
+  .close-month-btn:hover{border-color:var(--accent);background:var(--accent-light);}
+
+  .db-section{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:20px;
+  }
+  .db-section-title{
+    font-size:15px;
+    font-weight:600;
+    margin:0 0 12px;
+  }
+
+  .interval-controls{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:8px;
+  }
+  .cola-select{
+    appearance:none;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    font-size:13px;
+    padding:7px 12px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+
+  .curve-chart{
+    display:flex;
+    align-items:flex-end;
+    gap:2px;
+    height:180px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 12px 8px;
+  }
+  .curve-bar-wrap{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    height:100%;
+    min-width:6px;
+  }
+  .curve-bar{
+    width:100%;
+    background:var(--accent);
+    border-radius:2px 2px 0 0;
+    min-height:1px;
+    transition:height .2s;
+  }
+  .curve-label{
+    font-size:8px;
+    color:var(--text-muted);
+    margin-top:4px;
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    height:28px;
+  }
+
+  .heatmap-scroll{overflow-x:auto;}
+  .heatmap-table{border-collapse:collapse;font-size:11px;min-width:760px;}
+  .heatmap-table th{
+    padding:4px 3px;
+    background:#f0f2f5;
+    color:var(--text-muted);
+    font-weight:600;
+    text-align:center;
+    border:1px solid var(--border);
+  }
+  .heatmap-table td{
+    padding:6px 3px;
+    text-align:center;
+    border:1px solid var(--border);
+    font-weight:500;
+  }
+  .heatmap-daylabel{
+    background:#f0f2f5;
+    color:var(--text-muted);
+    font-weight:600;
+    text-align:left;
+    padding:4px 8px;
+  }
+
+  @media(max-width:640px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    table{font-size:12px;}
+    thead th, tbody td{padding:8px 6px;}
+    .main-tab{font-size:12px;padding:8px 6px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand-header">
+    <img class="brand-logo" src="data:image/png;base64,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" alt="Telecentro">
+    <div class="brand-titles">
+      <h1>Reporte de demanda</h1>
+      <p class="subtitle">Gerencia de Atención al Cliente · Canal digital</p>
+    </div>
+  </header>
+
+  <div class="main-tabs" id="mainTabs">
+    <button class="main-tab active" data-page="cola">Demanda por cola</button>
+    <button class="main-tab" data-page="intervalo">Demanda por intervalo</button>
+    <button class="main-tab" data-page="basedatos">Base de datos</button>
+  </div>
+
+  <!-- ============ PÁGINA: DEMANDA POR COLA ============ -->
+  <div id="pageCola" class="page">
+    <details class="avg-details" id="avgDetails">
+      <summary>Promedio por mes</summary>
+      <div id="avgCompareWrap"></div>
+    </details>
+
+    <div class="month-tabs" id="monthTabsCola"></div>
+
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <div class="section-title" id="monthlyTitle">Resumen mensual por cola</div>
+    <div id="monthlyTableWrap"></div>
+
+    <div class="day-picker-wrap">
+      <div class="section-title">Ver un día puntual</div>
+      <div class="day-picker" id="dayPicker"></div>
+      <div id="dailyTableWrap"></div>
+      <p class="note">El abandono se calcula como Descartados / Nuevos. "Asignados a agente" son los casos derivados efectivamente a la skill de un agente humano (no resueltos por bot). Vencidos son mensajes que superaron el SLA sin respuesta. ASA y TMO son promedios de los intervalos reportados (no ponderados por volumen del intervalo). Los meses en curso comparan promedio diario en lugar de total, porque pueden tener menos días cargados que un mes cerrado.</p>
+    </div>
+  </div>
+
+  <!-- ============ PÁGINA: DEMANDA POR INTERVALO ============ -->
+  <div id="pageIntervalo" class="page" style="display:none;">
+    <div class="month-tabs" id="monthTabsIntervalo"></div>
+
+    <div class="interval-controls">
+      <span class="section-title" style="margin:0;">Cola</span>
+      <select class="cola-select" id="intervaloColaSelect"></select>
+    </div>
+
+    <div class="section-title">Ver</div>
+    <div class="day-picker" id="intervaloDayPicker"></div>
+
+    <details class="avg-details" open>
+      <summary id="curvaSummary">Curva por día (volumen promedio por franja de 30 min)</summary>
+      <div id="curvaWrap"></div>
+    </details>
+
+    <details class="avg-details">
+      <summary>Mapa de calor (día de semana × hora)</summary>
+      <div id="heatmapWrap" class="heatmap-scroll"></div>
+    </details>
+
+    <details class="avg-details">
+      <summary id="asaTmoSummary">ASA y TMO por franja horaria</summary>
+      <div id="asaTmoWrap"></div>
+    </details>
+
+    <p class="note">"Promedio del mes" suma los mensajes de cada franja y divide por la cantidad de días distintos que aportaron datos a esa franja. Eligiendo un día puntual, la curva y la tabla de ASA/TMO muestran los valores reales de ese día (sin promediar). El mapa de calor siempre agrupa por día de la semana sobre todo el mes, para mostrar el patrón típico — no cambia con el selector de día.</p>
+  </div>
+
+  <!-- ============ PÁGINA: BASE DE DATOS ============ -->
+  <div id="pageBaseDatos" class="page" style="display:none;">
+    <div class="db-section">
+      <p class="db-section-title">Demanda por cola (acumulado diario)</p>
+      <div class="dropzone" id="dropzoneCola">
+        <p>Arrastrá acá el <strong>Consolidado de Colas - Detallado.xlsx</strong> (acumulado diario), o hacé clic para elegirlo.</p>
+        <input type="file" id="fileInputCola" accept=".xlsx" style="display:none;">
+      </div>
+      <div class="db-status" id="dbStatusCola">Datos cargados: desde 01/06 hasta 31/07 (congelado) + lo que traiga Supabase.</div>
+      <div id="openMonthsWrapCola"></div>
+    </div>
+
+    <div class="db-section">
+      <p class="db-section-title">Demanda por intervalo</p>
+      <div class="dropzone" id="dropzoneIntervalo">
+        <p>Arrastrá acá el <strong>Consolidado de Colas - Detallado.xlsx</strong> con columna "Intervalo" (franjas de 30 min), o hacé clic para elegirlo.</p>
+        <input type="file" id="fileInputIntervalo" accept=".xlsx" style="display:none;">
+      </div>
+      <div class="db-status" id="dbStatusIntervalo">Todavía no hay datos cargados. Arrastrá el consolidado con columna "Intervalo" arriba para empezar.</div>
+      <div id="openMonthsWrapIntervalo"></div>
+    </div>
+
+    <div class="db-actions">
+      <button class="db-download-btn" id="downloadBtn" disabled>Descargar reporte actualizado</button>
+    </div>
+    <p class="note">Al soltar un archivo, se guarda directo en la base de datos compartida (Supabase) — si un día/cola (o día/intervalo/cola) se repite, gana el del archivo nuevo. Cualquiera que abra este mismo reporte va a ver los datos actualizados automáticamente. El botón "Descargar reporte actualizado" descarga los meses ya congelados (🧊) de ambos datasets; los meses abiertos siguen viviendo en Supabase.</p>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script id="appScript">
+/* ========================================================================
+   CONFIG Y ESTADO COMPARTIDO
+   ======================================================================== */
+const COLAS = ["Whatsapp","atencion diferenciada","atencion diferenciada CABA","Facebook","Instagram","Incidencia Edificio","Postventa webchat"];
+const MESES_ES = {1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",7:"Julio",8:"Agosto",9:"Septiembre",10:"Octubre",11:"Noviembre",12:"Diciembre"};
+const MES_IDX = {"Enero":1,"Febrero":2,"Marzo":3,"Abril":4,"Mayo":5,"Junio":6,"Julio":7,"Agosto":8,"Septiembre":9,"Octubre":10,"Noviembre":11,"Diciembre":12};
+const OPEN_MONTHS_WARNING = 12;
+
+const SUPABASE_URL = "https://zssahkywlrblxpepgcgx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpzc2Foa3l3bHJibHhwZXBnY2d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwNDQzMDMsImV4cCI6MjEwMjYyMDMwM30.7V8RZhe-kJZLStEhRUT1XZtuxx-IGY0tLYyM65_nVi4";
+let supabaseClient = null;
+try{
+  if(window.supabase && window.supabase.createClient){
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+}catch(e){ console.error('No se pudo inicializar Supabase:', e); }
+
+function monthNombre(fecha){ return MESES_ES[parseInt(fecha.substring(5,7),10)]; }
+function dayLabel(fecha){ return fecha.slice(8,10) + "/" + fecha.slice(5,7); }
+function fmtNum(n){ return n.toLocaleString('es-AR'); }
+function fmtTime(sec){
+  if(sec===null || sec===undefined) return "—";
+  sec = Math.round(sec);
+  const m = Math.floor(sec/60);
+  const s = sec%60;
+  return m + ":" + String(s).padStart(2,'0');
+}
+function abandonoPill(pct){
+  let cls = "good";
+  if(pct >= 5) cls = "danger";
+  else if(pct >= 2) cls = "warn";
+  return '<span class="pill ' + cls + '">' + pct.toFixed(1) + '%</span>';
+}
+function mergeRows(baseRows, newRows, keyFn){
+  const map = new Map();
+  baseRows.forEach(r => map.set(keyFn(r), r));
+  newRows.forEach(r => map.set(keyFn(r), r));
+  return Array.from(map.values());
+}
+function excelSerialToDateStr(serial){
+  const utc_days = Math.floor(serial - 25569);
+  const utc_value = utc_days * 86400 * 1000;
+  const d = new Date(utc_value);
+  return d.getUTCFullYear() + "-" + String(d.getUTCMonth()+1).padStart(2,'0') + "-" + String(d.getUTCDate()).padStart(2,'0');
+}
+function toSecFromCell(v){
+  if(v===null || v===undefined || v==="") return null;
+  if(typeof v === 'number') return Math.round(v*86400);
+  if(typeof v === 'string'){
+    const parts = v.split(':');
+    if(parts.length===3) return parseInt(parts[0],10)*3600 + parseInt(parts[1],10)*60 + parseInt(parts[2],10);
+  }
+  return null;
+}
+function toTimeStringFromCell(v){
+  if(v===null || v===undefined) return null;
+  if(typeof v === 'number'){
+    const totalSeconds = Math.round(v*86400);
+    const hh = Math.floor(totalSeconds/3600);
+    const mm = Math.floor((totalSeconds%3600)/60);
+    const ss = totalSeconds%60;
+    return String(hh).padStart(2,'0') + ':' + String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  }
+  if(typeof v === 'string'){
+    const parts = v.split(':');
+    if(parts.length>=2){
+      return parts[0].padStart(2,'0') + ':' + parts[1].padStart(2,'0') + ':' + (parts[2]||'00').padStart(2,'0');
+    }
+  }
+  return null;
+}
+function readSheetRows(file, onRows, onError){
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, {type:'array'});
+      const sheetName = wb.SheetNames.find(n=>n==='Exportación')
+        || wb.SheetNames.find(n=>n.toLowerCase().startsWith('export'))
+        || wb.SheetNames[0];
+      const ws = wb.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(ws, {defval:null, raw:true});
+      onRows(json);
+    }catch(err){
+      console.error(err);
+      onError(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ========================================================================
+   PÁGINA 1: DEMANDA POR COLA
+   ======================================================================== */
+let FROZEN_MONTHS_COLA = /*FROZEN_START*/ {"Junio": [{"fecha": "2026-06-01", "cola": "Facebook", "nuevos": 412, "encolados": 224, "descartados": 16, "casos_cerrados": 105, "vencidos": 14, "asignados_agente": 223, "asa_sec": 2909.0, "tmo_sec": 327.0}, {"fecha": "2026-06-01", "cola": "Instagram", "nuevos": 36, "encolados": 35, "descartados": 0, "casos_cerrados": 26, "vencidos": 0, "asignados_agente": 26, "asa_sec": 47479.0, "tmo_sec": 58.0}, {"fecha": "2026-06-01", "cola": "Whatsapp", "nuevos": 21854, "encolados": 14291, "descartados": 619, "casos_cerrados": 2562, "vencidos": 425, "asignados_agente": 13891, "asa_sec": 1382.0, "tmo_sec": 356.0}, {"fecha": "2026-06-01", "cola": "atencion diferenciada", "nuevos": 3594, "encolados": 2666, "descartados": 3, "casos_cerrados": 554, "vencidos": 0, "asignados_agente": 2672, "asa_sec": 506.0, "tmo_sec": 349.0}, {"fecha": "2026-06-02", "cola": "Facebook", "nuevos": 329, "encolados": 197, "descartados": 10, "casos_cerrados": 96, "vencidos": 5, "asignados_agente": 195, "asa_sec": 2250.0, "tmo_sec": 293.0}, {"fecha": "2026-06-02", "cola": "Instagram", "nuevos": 45, "encolados": 37, "descartados": 0, "casos_cerrados": 47, "vencidos": 0, "asignados_agente": 47, "asa_sec": 21476.0, "tmo_sec": 87.0}, {"fecha": "2026-06-02", "cola": "Whatsapp", "nuevos": 22545, "encolados": 14318, "descartados": 569, "casos_cerrados": 2678, "vencidos": 366, "asignados_agente": 13971, "asa_sec": 1380.0, "tmo_sec": 357.0}, {"fecha": "2026-06-02", "cola": "atencion diferenciada", "nuevos": 3771, "encolados": 2772, "descartados": 1, "casos_cerrados": 478, "vencidos": 0, "asignados_agente": 2776, "asa_sec": 469.0, "tmo_sec": 365.0}, {"fecha": "2026-06-03", "cola": "Facebook", "nuevos": 427, "encolados": 224, "descartados": 13, "casos_cerrados": 116, "vencidos": 5, "asignados_agente": 216, "asa_sec": 3186.0, "tmo_sec": 261.0}, {"fecha": "2026-06-03", "cola": "Instagram", "nuevos": 64, "encolados": 63, "descartados": 0, "casos_cerrados": 36, "vencidos": 0, "asignados_agente": 36, "asa_sec": 15136.0, "tmo_sec": 84.0}, {"fecha": "2026-06-03", "cola": "Whatsapp", "nuevos": 24742, "encolados": 15441, "descartados": 490, "casos_cerrados": 2864, "vencidos": 330, "asignados_agente": 15101, "asa_sec": 1229.0, "tmo_sec": 348.0}, {"fecha": "2026-06-03", "cola": "atencion diferenciada", "nuevos": 3166, "encolados": 2388, "descartados": 9, "casos_cerrados": 452, "vencidos": 0, "asignados_agente": 2386, "asa_sec": 436.0, "tmo_sec": 339.0}, {"fecha": "2026-06-04", "cola": "Facebook", "nuevos": 356, "encolados": 202, "descartados": 17, "casos_cerrados": 122, "vencidos": 12, "asignados_agente": 193, "asa_sec": 2593.0, "tmo_sec": 362.0}, {"fecha": "2026-06-04", "cola": "Instagram", "nuevos": 27, "encolados": 25, "descartados": 0, "casos_cerrados": 50, "vencidos": 0, "asignados_agente": 50, "asa_sec": 31021.0, "tmo_sec": 61.0}, {"fecha": "2026-06-04", "cola": "Whatsapp", "nuevos": 24411, "encolados": 15797, "descartados": 537, "casos_cerrados": 2907, "vencidos": 357, "asignados_agente": 15462, "asa_sec": 1227.0, "tmo_sec": 357.0}, {"fecha": "2026-06-04", "cola": "atencion diferenciada", "nuevos": 2491, "encolados": 1908, "descartados": 0, "casos_cerrados": 359, "vencidos": 0, "asignados_agente": 1909, "asa_sec": 532.0, "tmo_sec": 353.0}, {"fecha": "2026-06-05", "cola": "Facebook", "nuevos": 251, "encolados": 140, "descartados": 8, "casos_cerrados": 71, "vencidos": 5, "asignados_agente": 133, "asa_sec": 3189.0, "tmo_sec": 262.0}, {"fecha": "2026-06-05", "cola": "Instagram", "nuevos": 16, "encolados": 15, "descartados": 0, "casos_cerrados": 20, "vencidos": 0, "asignados_agente": 20, "asa_sec": 20879.0, "tmo_sec": 152.0}, {"fecha": "2026-06-05", "cola": "Whatsapp", "nuevos": 23137, "encolados": 14881, "descartados": 498, "casos_cerrados": 2768, "vencidos": 344, "asignados_agente": 14539, "asa_sec": 1225.0, "tmo_sec": 369.0}, {"fecha": "2026-06-05", "cola": "atencion diferenciada", "nuevos": 2422, "encolados": 1844, "descartados": 1, "casos_cerrados": 334, "vencidos": 0, "asignados_agente": 1846, "asa_sec": 515.0, "tmo_sec": 387.0}, {"fecha": "2026-06-06", "cola": "Facebook", "nuevos": 177, "encolados": 89, "descartados": 41, "casos_cerrados": 77, "vencidos": 37, "asignados_agente": 34, "asa_sec": 3453.0, "tmo_sec": 253.0}, {"fecha": "2026-06-06", "cola": "Instagram", "nuevos": 13, "encolados": 13, "descartados": 0, "casos_cerrados": 10, "vencidos": 0, "asignados_agente": 10, "asa_sec": 27305.0, "tmo_sec": 168.0}, {"fecha": "2026-06-06", "cola": "Whatsapp", "nuevos": 12181, "encolados": 7153, "descartados": 852, "casos_cerrados": 1934, "vencidos": 737, "asignados_agente": 6427, "asa_sec": 1148.0, "tmo_sec": 356.0}, {"fecha": "2026-06-06", "cola": "atencion diferenciada", "nuevos": 2063, "encolados": 1518, "descartados": 2, "casos_cerrados": 326, "vencidos": 0, "asignados_agente": 1520, "asa_sec": 498.0, "tmo_sec": 348.0}, {"fecha": "2026-06-07", "cola": "Facebook", "nuevos": 89, "encolados": 49, "descartados": 44, "casos_cerrados": 62, "vencidos": 38, "asignados_agente": 19, "asa_sec": 1106.0, "tmo_sec": 414.0}, {"fecha": "2026-06-07", "cola": "Instagram", "nuevos": 16, "encolados": 11, "descartados": 0, "casos_cerrados": 5, "vencidos": 0, "asignados_agente": 5, "asa_sec": 47198.0, "tmo_sec": 53.0}, {"fecha": "2026-06-07", "cola": "Whatsapp", "nuevos": 9875, "encolados": 5639, "descartados": 725, "casos_cerrados": 1579, "vencidos": 659, "asignados_agente": 4981, "asa_sec": 1674.0, "tmo_sec": 381.0}, {"fecha": "2026-06-07", "cola": "atencion diferenciada", "nuevos": 1079, "encolados": 788, "descartados": 3, "casos_cerrados": 135, "vencidos": 0, "asignados_agente": 790, "asa_sec": 533.0, "tmo_sec": 399.0}, {"fecha": "2026-06-08", "cola": "Facebook", "nuevos": 535, "encolados": 270, "descartados": 23, "casos_cerrados": 117, "vencidos": 14, "asignados_agente": 269, "asa_sec": 2555.0, "tmo_sec": 277.0}, {"fecha": "2026-06-08", "cola": "Instagram", "nuevos": 31, "encolados": 25, "descartados": 0, "casos_cerrados": 26, "vencidos": 0, "asignados_agente": 26, "asa_sec": 26905.0, "tmo_sec": 106.0}, {"fecha": "2026-06-08", "cola": "Whatsapp", "nuevos": 22545, "encolados": 14598, "descartados": 666, "casos_cerrados": 2763, "vencidos": 449, "asignados_agente": 14172, "asa_sec": 1213.0, "tmo_sec": 365.0}, {"fecha": "2026-06-08", "cola": "atencion diferenciada", "nuevos": 2752, "encolados": 2103, "descartados": 1, "casos_cerrados": 386, "vencidos": 0, "asignados_agente": 2103, "asa_sec": 489.0, "tmo_sec": 368.0}, {"fecha": "2026-06-09", "cola": "Facebook", "nuevos": 347, "encolados": 176, "descartados": 14, "casos_cerrados": 110, "vencidos": 11, "asignados_agente": 164, "asa_sec": 2985.0, "tmo_sec": 372.0}, {"fecha": "2026-06-09", "cola": "Instagram", "nuevos": 50, "encolados": 30, "descartados": 0, "casos_cerrados": 33, "vencidos": 0, "asignados_agente": 33, "asa_sec": 17512.0, "tmo_sec": 121.0}, {"fecha": "2026-06-09", "cola": "Whatsapp", "nuevos": 21950, "encolados": 14048, "descartados": 635, "casos_cerrados": 2699, "vencidos": 417, "asignados_agente": 13636, "asa_sec": 1287.0, "tmo_sec": 376.0}, {"fecha": "2026-06-09", "cola": "atencion diferenciada", "nuevos": 3409, "encolados": 2549, "descartados": 2, "casos_cerrados": 480, "vencidos": 0, "asignados_agente": 2552, "asa_sec": 485.0, "tmo_sec": 371.0}, {"fecha": "2026-06-10", "cola": "Facebook", "nuevos": 330, "encolados": 194, "descartados": 16, "casos_cerrados": 102, "vencidos": 9, "asignados_agente": 186, "asa_sec": 2697.0, "tmo_sec": 362.0}, {"fecha": "2026-06-10", "cola": "Instagram", "nuevos": 26, "encolados": 22, "descartados": 0, "casos_cerrados": 19, "vencidos": 0, "asignados_agente": 19, "asa_sec": 16638.0, "tmo_sec": 114.0}, {"fecha": "2026-06-10", "cola": "Whatsapp", "nuevos": 21792, "encolados": 13884, "descartados": 514, "casos_cerrados": 2615, "vencidos": 380, "asignados_agente": 13548, "asa_sec": 1387.0, "tmo_sec": 386.0}, {"fecha": "2026-06-10", "cola": "atencion diferenciada", "nuevos": 2856, "encolados": 2131, "descartados": 5, "casos_cerrados": 401, "vencidos": 0, "asignados_agente": 2130, "asa_sec": 525.0, "tmo_sec": 395.0}, {"fecha": "2026-06-11", "cola": "Facebook", "nuevos": 306, "encolados": 171, "descartados": 16, "casos_cerrados": 91, "vencidos": 10, "asignados_agente": 162, "asa_sec": 2991.0, "tmo_sec": 427.0}, {"fecha": "2026-06-11", "cola": "Instagram", "nuevos": 26, "encolados": 25, "descartados": 0, "casos_cerrados": 26, "vencidos": 0, "asignados_agente": 26, "asa_sec": 14408.0, "tmo_sec": 170.0}, {"fecha": "2026-06-11", "cola": "Whatsapp", "nuevos": 22518, "encolados": 14530, "descartados": 538, "casos_cerrados": 2817, "vencidos": 365, "asignados_agente": 14182, "asa_sec": 1234.0, "tmo_sec": 376.0}, {"fecha": "2026-06-11", "cola": "atencion diferenciada", "nuevos": 2596, "encolados": 1921, "descartados": 3, "casos_cerrados": 389, "vencidos": 0, "asignados_agente": 1927, "asa_sec": 527.0, "tmo_sec": 384.0}, {"fecha": "2026-06-12", "cola": "Facebook", "nuevos": 160, "encolados": 102, "descartados": 8, "casos_cerrados": 84, "vencidos": 6, "asignados_agente": 96, "asa_sec": 2718.0, "tmo_sec": 325.0}, {"fecha": "2026-06-12", "cola": "Instagram", "nuevos": 28, "encolados": 27, "descartados": 0, "casos_cerrados": 27, "vencidos": 0, "asignados_agente": 33, "asa_sec": 10584.0, "tmo_sec": 392.0}, {"fecha": "2026-06-12", "cola": "Whatsapp", "nuevos": 21647, "encolados": 14316, "descartados": 467, "casos_cerrados": 2706, "vencidos": 329, "asignados_agente": 14012, "asa_sec": 922.0, "tmo_sec": 365.0}, {"fecha": "2026-06-12", "cola": "atencion diferenciada", "nuevos": 2014, "encolados": 1569, "descartados": 2, "casos_cerrados": 324, "vencidos": 0, "asignados_agente": 1574, "asa_sec": 481.0, "tmo_sec": 363.0}, {"fecha": "2026-06-13", "cola": "Facebook", "nuevos": 111, "encolados": 51, "descartados": 28, "casos_cerrados": 62, "vencidos": 22, "asignados_agente": 23, "asa_sec": 674.0, "tmo_sec": 249.0}, {"fecha": "2026-06-13", "cola": "Instagram", "nuevos": 14, "encolados": 14, "descartados": 0, "casos_cerrados": 19, "vencidos": 0, "asignados_agente": 14, "asa_sec": 5370.0, "tmo_sec": 245.0}, {"fecha": "2026-06-13", "cola": "Whatsapp", "nuevos": 12501, "encolados": 6994, "descartados": 856, "casos_cerrados": 1908, "vencidos": 734, "asignados_agente": 6286, "asa_sec": 1146.0, "tmo_sec": 382.0}, {"fecha": "2026-06-13", "cola": "atencion diferenciada", "nuevos": 1926, "encolados": 1406, "descartados": 2, "casos_cerrados": 261, "vencidos": 0, "asignados_agente": 1409, "asa_sec": 511.0, "tmo_sec": 383.0}, {"fecha": "2026-06-14", "cola": "Facebook", "nuevos": 93, "encolados": 48, "descartados": 29, "casos_cerrados": 46, "vencidos": 23, "asignados_agente": 25, "asa_sec": 1295.0, "tmo_sec": 204.0}, {"fecha": "2026-06-14", "cola": "Instagram", "nuevos": 17, "encolados": 15, "descartados": 0, "casos_cerrados": 10, "vencidos": 0, "asignados_agente": 15, "asa_sec": 8443.0, "tmo_sec": 319.0}, {"fecha": "2026-06-14", "cola": "Whatsapp", "nuevos": 9533, "encolados": 5177, "descartados": 698, "casos_cerrados": 1545, "vencidos": 587, "asignados_agente": 4593, "asa_sec": 2138.0, "tmo_sec": 378.0}, {"fecha": "2026-06-14", "cola": "atencion diferenciada", "nuevos": 1800, "encolados": 1297, "descartados": 0, "casos_cerrados": 242, "vencidos": 0, "asignados_agente": 1297, "asa_sec": 522.0, "tmo_sec": 370.0}, {"fecha": "2026-06-15", "cola": "Facebook", "nuevos": 143, "encolados": 80, "descartados": 24, "casos_cerrados": 54, "vencidos": 18, "asignados_agente": 51, "asa_sec": 3236.0, "tmo_sec": 262.0}, {"fecha": "2026-06-15", "cola": "Instagram", "nuevos": 23, "encolados": 22, "descartados": 0, "casos_cerrados": 17, "vencidos": 0, "asignados_agente": 22, "asa_sec": 5712.0, "tmo_sec": 267.0}, {"fecha": "2026-06-15", "cola": "Whatsapp", "nuevos": 13312, "encolados": 7698, "descartados": 847, "casos_cerrados": 1945, "vencidos": 727, "asignados_agente": 6966, "asa_sec": 956.0, "tmo_sec": 342.0}, {"fecha": "2026-06-15", "cola": "atencion diferenciada", "nuevos": 1716, "encolados": 1309, "descartados": 1, "casos_cerrados": 263, "vencidos": 0, "asignados_agente": 1308, "asa_sec": 553.0, "tmo_sec": 359.0}, {"fecha": "2026-06-16", "cola": "Facebook", "nuevos": 427, "encolados": 234, "descartados": 23, "casos_cerrados": 91, "vencidos": 19, "asignados_agente": 234, "asa_sec": 2054.0, "tmo_sec": 374.0}, {"fecha": "2026-06-16", "cola": "Instagram", "nuevos": 36, "encolados": 28, "descartados": 0, "casos_cerrados": 21, "vencidos": 0, "asignados_agente": 28, "asa_sec": 3198.0, "tmo_sec": 303.0}, {"fecha": "2026-06-16", "cola": "Whatsapp", "nuevos": 22177, "encolados": 14141, "descartados": 611, "casos_cerrados": 2679, "vencidos": 429, "asignados_agente": 13774, "asa_sec": 1309.0, "tmo_sec": 367.0}, {"fecha": "2026-06-16", "cola": "atencion diferenciada", "nuevos": 3415, "encolados": 2508, "descartados": 0, "casos_cerrados": 508, "vencidos": 0, "asignados_agente": 2521, "asa_sec": 522.0, "tmo_sec": 376.0}, {"fecha": "2026-06-17", "cola": "Facebook", "nuevos": 328, "encolados": 143, "descartados": 11, "casos_cerrados": 75, "vencidos": 9, "asignados_agente": 128, "asa_sec": 1217.0, "tmo_sec": 391.0}, {"fecha": "2026-06-17", "cola": "Instagram", "nuevos": 27, "encolados": 27, "descartados": 0, "casos_cerrados": 29, "vencidos": 0, "asignados_agente": 27, "asa_sec": 4091.0, "tmo_sec": 730.0}, {"fecha": "2026-06-17", "cola": "Whatsapp", "nuevos": 23094, "encolados": 14896, "descartados": 531, "casos_cerrados": 2778, "vencidos": 323, "asignados_agente": 14535, "asa_sec": 1165.0, "tmo_sec": 360.0}, {"fecha": "2026-06-17", "cola": "atencion diferenciada", "nuevos": 2706, "encolados": 2030, "descartados": 3, "casos_cerrados": 366, "vencidos": 0, "asignados_agente": 2033, "asa_sec": 488.0, "tmo_sec": 345.0}, {"fecha": "2026-06-18", "cola": "Facebook", "nuevos": 319, "encolados": 115, "descartados": 16, "casos_cerrados": 66, "vencidos": 9, "asignados_agente": 102, "asa_sec": 2163.0, "tmo_sec": 401.0}, {"fecha": "2026-06-18", "cola": "Instagram", "nuevos": 32, "encolados": 21, "descartados": 0, "casos_cerrados": 19, "vencidos": 0, "asignados_agente": 17, "asa_sec": 4822.0, "tmo_sec": 262.0}, {"fecha": "2026-06-18", "cola": "Whatsapp", "nuevos": 23562, "encolados": 14664, "descartados": 1103, "casos_cerrados": 3262, "vencidos": 481, "asignados_agente": 14200, "asa_sec": 1229.0, "tmo_sec": 354.0}, {"fecha": "2026-06-18", "cola": "atencion diferenciada", "nuevos": 2469, "encolados": 1874, "descartados": 3, "casos_cerrados": 349, "vencidos": 0, "asignados_agente": 1895, "asa_sec": 481.0, "tmo_sec": 350.0}, {"fecha": "2026-06-19", "cola": "Facebook", "nuevos": 250, "encolados": 140, "descartados": 20, "casos_cerrados": 85, "vencidos": 17, "asignados_agente": 135, "asa_sec": 2282.0, "tmo_sec": 320.0}, {"fecha": "2026-06-19", "cola": "Instagram", "nuevos": 18, "encolados": 15, "descartados": 0, "casos_cerrados": 14, "vencidos": 0, "asignados_agente": 17, "asa_sec": 7576.0, "tmo_sec": 270.0}, {"fecha": "2026-06-19", "cola": "Whatsapp", "nuevos": 24417, "encolados": 15301, "descartados": 757, "casos_cerrados": 3162, "vencidos": 450, "asignados_agente": 15006, "asa_sec": 1232.0, "tmo_sec": 346.0}, {"fecha": "2026-06-19", "cola": "atencion diferenciada", "nuevos": 2594, "encolados": 1959, "descartados": 0, "casos_cerrados": 354, "vencidos": 0, "asignados_agente": 1972, "asa_sec": 486.0, "tmo_sec": 347.0}, {"fecha": "2026-06-20", "cola": "Facebook", "nuevos": 455, "encolados": 103, "descartados": 14, "casos_cerrados": 61, "vencidos": 13, "asignados_agente": 74, "asa_sec": 4242.0, "tmo_sec": 213.0}, {"fecha": "2026-06-20", "cola": "Instagram", "nuevos": 104, "encolados": 89, "descartados": 0, "casos_cerrados": 56, "vencidos": 0, "asignados_agente": 81, "asa_sec": 5192.0, "tmo_sec": 219.0}, {"fecha": "2026-06-20", "cola": "Whatsapp", "nuevos": 13351, "encolados": 7692, "descartados": 800, "casos_cerrados": 1957, "vencidos": 717, "asignados_agente": 6988, "asa_sec": 1113.0, "tmo_sec": 355.0}, {"fecha": "2026-06-20", "cola": "atencion diferenciada", "nuevos": 1751, "encolados": 1270, "descartados": 6, "casos_cerrados": 235, "vencidos": 0, "asignados_agente": 1270, "asa_sec": 479.0, "tmo_sec": 343.0}, {"fecha": "2026-06-21", "cola": "Facebook", "nuevos": 110, "encolados": 59, "descartados": 31, "casos_cerrados": 76, "vencidos": 28, "asignados_agente": 37, "asa_sec": 2758.0, "tmo_sec": 225.0}, {"fecha": "2026-06-21", "cola": "Instagram", "nuevos": 25, "encolados": 25, "descartados": 0, "casos_cerrados": 48, "vencidos": 0, "asignados_agente": 29, "asa_sec": 15111.0, "tmo_sec": 177.0}, {"fecha": "2026-06-21", "cola": "Whatsapp", "nuevos": 10054, "encolados": 5859, "descartados": 705, "casos_cerrados": 1600, "vencidos": 604, "asignados_agente": 5238, "asa_sec": 1480.0, "tmo_sec": 343.0}, {"fecha": "2026-06-21", "cola": "atencion diferenciada", "nuevos": 1361, "encolados": 985, "descartados": 1, "casos_cerrados": 173, "vencidos": 0, "asignados_agente": 987, "asa_sec": 534.0, "tmo_sec": 328.0}, {"fecha": "2026-06-22", "cola": "Facebook", "nuevos": 315, "encolados": 193, "descartados": 24, "casos_cerrados": 91, "vencidos": 16, "asignados_agente": 189, "asa_sec": 1679.0, "tmo_sec": 257.0}, {"fecha": "2026-06-22", "cola": "Instagram", "nuevos": 68, "encolados": 54, "descartados": 0, "casos_cerrados": 34, "vencidos": 0, "asignados_agente": 55, "asa_sec": 2456.0, "tmo_sec": 256.0}, {"fecha": "2026-06-22", "cola": "Whatsapp", "nuevos": 24241, "encolados": 15359, "descartados": 508, "casos_cerrados": 2890, "vencidos": 326, "asignados_agente": 15039, "asa_sec": 1279.0, "tmo_sec": 341.0}, {"fecha": "2026-06-22", "cola": "atencion diferenciada", "nuevos": 2997, "encolados": 2228, "descartados": 0, "casos_cerrados": 402, "vencidos": 0, "asignados_agente": 2230, "asa_sec": 421.0, "tmo_sec": 342.0}, {"fecha": "2026-06-23", "cola": "Facebook", "nuevos": 636, "encolados": 281, "descartados": 7, "casos_cerrados": 113, "vencidos": 3, "asignados_agente": 251, "asa_sec": 2155.0, "tmo_sec": 346.0}, {"fecha": "2026-06-23", "cola": "Instagram", "nuevos": 26, "encolados": 24, "descartados": 0, "casos_cerrados": 34, "vencidos": 0, "asignados_agente": 20, "asa_sec": 4054.0, "tmo_sec": 324.0}, {"fecha": "2026-06-23", "cola": "Whatsapp", "nuevos": 26910, "encolados": 14960, "descartados": 1527, "casos_cerrados": 3575, "vencidos": 461, "asignados_agente": 14401, "asa_sec": 1352.0, "tmo_sec": 371.0}, {"fecha": "2026-06-23", "cola": "atencion diferenciada", "nuevos": 2352, "encolados": 1714, "descartados": 0, "casos_cerrados": 324, "vencidos": 0, "asignados_agente": 1713, "asa_sec": 450.0, "tmo_sec": 363.0}, {"fecha": "2026-06-24", "cola": "Facebook", "nuevos": 476, "encolados": 267, "descartados": 34, "casos_cerrados": 155, "vencidos": 34, "asignados_agente": 261, "asa_sec": 2150.0, "tmo_sec": 321.0}, {"fecha": "2026-06-24", "cola": "Instagram", "nuevos": 32, "encolados": 27, "descartados": 0, "casos_cerrados": 23, "vencidos": 0, "asignados_agente": 29, "asa_sec": 8894.0, "tmo_sec": 202.0}, {"fecha": "2026-06-24", "cola": "Whatsapp", "nuevos": 24350, "encolados": 15150, "descartados": 914, "casos_cerrados": 3012, "vencidos": 594, "asignados_agente": 14708, "asa_sec": 1296.0, "tmo_sec": 364.0}, {"fecha": "2026-06-24", "cola": "atencion diferenciada", "nuevos": 2504, "encolados": 1802, "descartados": 2, "casos_cerrados": 338, "vencidos": 0, "asignados_agente": 1804, "asa_sec": 478.0, "tmo_sec": 344.0}, {"fecha": "2026-06-25", "cola": "Facebook", "nuevos": 326, "encolados": 177, "descartados": 8, "casos_cerrados": 83, "vencidos": 6, "asignados_agente": 172, "asa_sec": 2844.0, "tmo_sec": 303.0}, {"fecha": "2026-06-25", "cola": "Instagram", "nuevos": 16, "encolados": 16, "descartados": 0, "casos_cerrados": 22, "vencidos": 0, "asignados_agente": 16, "asa_sec": 5332.0, "tmo_sec": 157.0}, {"fecha": "2026-06-25", "cola": "Whatsapp", "nuevos": 26204, "encolados": 16663, "descartados": 492, "casos_cerrados": 2995, "vencidos": 337, "asignados_agente": 16358, "asa_sec": 1100.0, "tmo_sec": 347.0}, {"fecha": "2026-06-25", "cola": "atencion diferenciada", "nuevos": 2167, "encolados": 1695, "descartados": 2, "casos_cerrados": 331, "vencidos": 0, "asignados_agente": 1695, "asa_sec": 500.0, "tmo_sec": 352.0}, {"fecha": "2026-06-26", "cola": "Facebook", "nuevos": 288, "encolados": 151, "descartados": 4, "casos_cerrados": 75, "vencidos": 4, "asignados_agente": 147, "asa_sec": 2967.0, "tmo_sec": 293.0}, {"fecha": "2026-06-26", "cola": "Instagram", "nuevos": 25, "encolados": 16, "descartados": 0, "casos_cerrados": 13, "vencidos": 0, "asignados_agente": 15, "asa_sec": 3101.0, "tmo_sec": 135.0}, {"fecha": "2026-06-26", "cola": "Whatsapp", "nuevos": 25591, "encolados": 16219, "descartados": 538, "casos_cerrados": 3015, "vencidos": 347, "asignados_agente": 15891, "asa_sec": 1167.0, "tmo_sec": 346.0}, {"fecha": "2026-06-26", "cola": "atencion diferenciada", "nuevos": 2382, "encolados": 1753, "descartados": 1, "casos_cerrados": 362, "vencidos": 0, "asignados_agente": 1756, "asa_sec": 484.0, "tmo_sec": 366.0}, {"fecha": "2026-06-27", "cola": "Facebook", "nuevos": 205, "encolados": 95, "descartados": 13, "casos_cerrados": 70, "vencidos": 11, "asignados_agente": 68, "asa_sec": 3798.0, "tmo_sec": 215.0}, {"fecha": "2026-06-27", "cola": "Instagram", "nuevos": 34, "encolados": 28, "descartados": 0, "casos_cerrados": 19, "vencidos": 0, "asignados_agente": 22, "asa_sec": 5448.0, "tmo_sec": 211.0}, {"fecha": "2026-06-27", "cola": "Whatsapp", "nuevos": 15003, "encolados": 8767, "descartados": 830, "casos_cerrados": 2117, "vencidos": 724, "asignados_agente": 8046, "asa_sec": 1020.0, "tmo_sec": 326.0}, {"fecha": "2026-06-27", "cola": "atencion diferenciada", "nuevos": 1453, "encolados": 1085, "descartados": 1, "casos_cerrados": 190, "vencidos": 0, "asignados_agente": 1087, "asa_sec": 448.0, "tmo_sec": 338.0}, {"fecha": "2026-06-28", "cola": "Facebook", "nuevos": 137, "encolados": 78, "descartados": 30, "casos_cerrados": 59, "vencidos": 27, "asignados_agente": 53, "asa_sec": 3360.0, "tmo_sec": 202.0}, {"fecha": "2026-06-28", "cola": "Instagram", "nuevos": 26, "encolados": 21, "descartados": 0, "casos_cerrados": 22, "vencidos": 0, "asignados_agente": 24, "asa_sec": 10992.0, "tmo_sec": 225.0}, {"fecha": "2026-06-28", "cola": "Whatsapp", "nuevos": 12164, "encolados": 7299, "descartados": 811, "casos_cerrados": 1845, "vencidos": 692, "asignados_agente": 6625, "asa_sec": 994.0, "tmo_sec": 342.0}, {"fecha": "2026-06-28", "cola": "atencion diferenciada", "nuevos": 866, "encolados": 653, "descartados": 3, "casos_cerrados": 133, "vencidos": 0, "asignados_agente": 655, "asa_sec": 416.0, "tmo_sec": 328.0}, {"fecha": "2026-06-29", "cola": "Facebook", "nuevos": 305, "encolados": 140, "descartados": 20, "casos_cerrados": 74, "vencidos": 16, "asignados_agente": 138, "asa_sec": 1723.0, "tmo_sec": 284.0}, {"fecha": "2026-06-29", "cola": "Instagram", "nuevos": 20, "encolados": 20, "descartados": 0, "casos_cerrados": 19, "vencidos": 0, "asignados_agente": 20, "asa_sec": 3287.0, "tmo_sec": 117.0}, {"fecha": "2026-06-29", "cola": "Whatsapp", "nuevos": 25921, "encolados": 16744, "descartados": 557, "casos_cerrados": 2992, "vencidos": 372, "asignados_agente": 16408, "asa_sec": 1162.0, "tmo_sec": 327.0}, {"fecha": "2026-06-29", "cola": "atencion diferenciada", "nuevos": 2889, "encolados": 2225, "descartados": 0, "casos_cerrados": 420, "vencidos": 0, "asignados_agente": 2229, "asa_sec": 410.0, "tmo_sec": 331.0}, {"fecha": "2026-06-30", "cola": "Facebook", "nuevos": 371, "encolados": 191, "descartados": 10, "casos_cerrados": 101, "vencidos": 7, "asignados_agente": 185, "asa_sec": 2107.0, "tmo_sec": 315.0}, {"fecha": "2026-06-30", "cola": "Instagram", "nuevos": 22, "encolados": 20, "descartados": 0, "casos_cerrados": 18, "vencidos": 0, "asignados_agente": 19, "asa_sec": 4981.0, "tmo_sec": 190.0}, {"fecha": "2026-06-30", "cola": "Whatsapp", "nuevos": 24976, "encolados": 16236, "descartados": 522, "casos_cerrados": 2948, "vencidos": 362, "asignados_agente": 15918, "asa_sec": 1214.0, "tmo_sec": 338.0}, {"fecha": "2026-06-30", "cola": "atencion diferenciada", "nuevos": 3189, "encolados": 2369, "descartados": 0, "casos_cerrados": 395, "vencidos": 0, "asignados_agente": 2374, "asa_sec": 419.0, "tmo_sec": 324.0}], "Julio": [{"fecha": "2026-07-01", "cola": "Facebook", "nuevos": 274, "encolados": 171, "descartados": 2, "casos_cerrados": 87, "vencidos": 2, "asignados_agente": 170, "asa_sec": 1255.0, "tmo_sec": 346.0}, {"fecha": "2026-07-01", "cola": "Instagram", "nuevos": 34, "encolados": 27, "descartados": 0, "casos_cerrados": 20, "vencidos": 0, "asignados_agente": 25, "asa_sec": 2579.0, "tmo_sec": 286.0}, {"fecha": "2026-07-01", "cola": "Whatsapp", "nuevos": 36868, "encolados": 23135, "descartados": 476, "casos_cerrados": 4245, "vencidos": 315, "asignados_agente": 23328, "asa_sec": 716.0, "tmo_sec": 433.0}, {"fecha": "2026-07-01", "cola": "atencion diferenciada", "nuevos": 2246, "encolados": 1542, "descartados": 1, "casos_cerrados": 334, "vencidos": 0, "asignados_agente": 1559, "asa_sec": 518.0, "tmo_sec": 426.0}, {"fecha": "2026-07-02", "cola": "Facebook", "nuevos": 315, "encolados": 189, "descartados": 7, "casos_cerrados": 88, "vencidos": 4, "asignados_agente": 186, "asa_sec": 1404.0, "tmo_sec": 370.0}, {"fecha": "2026-07-02", "cola": "Instagram", "nuevos": 21, "encolados": 21, "descartados": 0, "casos_cerrados": 21, "vencidos": 0, "asignados_agente": 21, "asa_sec": 2268.0, "tmo_sec": 250.0}, {"fecha": "2026-07-02", "cola": "Whatsapp", "nuevos": 35799, "encolados": 22869, "descartados": 416, "casos_cerrados": 4253, "vencidos": 265, "asignados_agente": 22579, "asa_sec": 645.0, "tmo_sec": 461.0}, {"fecha": "2026-07-02", "cola": "atencion diferenciada", "nuevos": 2664, "encolados": 1918, "descartados": 3, "casos_cerrados": 413, "vencidos": 0, "asignados_agente": 1918, "asa_sec": 552.0, "tmo_sec": 460.0}, {"fecha": "2026-07-03", "cola": "Facebook", "nuevos": 184, "encolados": 141, "descartados": 5, "casos_cerrados": 73, "vencidos": 3, "asignados_agente": 138, "asa_sec": 918.0, "tmo_sec": 311.0}, {"fecha": "2026-07-03", "cola": "Instagram", "nuevos": 36, "encolados": 36, "descartados": 0, "casos_cerrados": 30, "vencidos": 0, "asignados_agente": 35, "asa_sec": 1961.0, "tmo_sec": 395.0}, {"fecha": "2026-07-03", "cola": "Whatsapp", "nuevos": 31913, "encolados": 20862, "descartados": 484, "casos_cerrados": 4226, "vencidos": 330, "asignados_agente": 20869, "asa_sec": 660.0, "tmo_sec": 458.0}, {"fecha": "2026-07-03", "cola": "atencion diferenciada", "nuevos": 1936, "encolados": 1390, "descartados": 4, "casos_cerrados": 311, "vencidos": 0, "asignados_agente": 1389, "asa_sec": 588.0, "tmo_sec": 471.0}, {"fecha": "2026-07-04", "cola": "Facebook", "nuevos": 210, "encolados": 110, "descartados": 4, "casos_cerrados": 57, "vencidos": 1, "asignados_agente": 109, "asa_sec": 1351.0, "tmo_sec": 328.0}, {"fecha": "2026-07-04", "cola": "Instagram", "nuevos": 20, "encolados": 18, "descartados": 0, "casos_cerrados": 13, "vencidos": 0, "asignados_agente": 18, "asa_sec": 2616.0, "tmo_sec": 325.0}, {"fecha": "2026-07-04", "cola": "Whatsapp", "nuevos": 18775, "encolados": 11022, "descartados": 265, "casos_cerrados": 2196, "vencidos": 145, "asignados_agente": 10675, "asa_sec": 1270.0, "tmo_sec": 466.0}, {"fecha": "2026-07-04", "cola": "atencion diferenciada", "nuevos": 1427, "encolados": 998, "descartados": 1, "casos_cerrados": 232, "vencidos": 0, "asignados_agente": 997, "asa_sec": 643.0, "tmo_sec": 469.0}, {"fecha": "2026-07-05", "cola": "Facebook", "nuevos": 149, "encolados": 89, "descartados": 4, "casos_cerrados": 72, "vencidos": 3, "asignados_agente": 85, "asa_sec": 2965.0, "tmo_sec": 447.0}, {"fecha": "2026-07-05", "cola": "Instagram", "nuevos": 14, "encolados": 14, "descartados": 0, "casos_cerrados": 22, "vencidos": 0, "asignados_agente": 14, "asa_sec": 3310.0, "tmo_sec": 221.0}, {"fecha": "2026-07-05", "cola": "Whatsapp", "nuevos": 14899, "encolados": 8600, "descartados": 637, "casos_cerrados": 2036, "vencidos": 520, "asignados_agente": 8063, "asa_sec": 1071.0, "tmo_sec": 474.0}, {"fecha": "2026-07-05", "cola": "atencion diferenciada", "nuevos": 934, "encolados": 607, "descartados": 2, "casos_cerrados": 139, "vencidos": 0, "asignados_agente": 610, "asa_sec": 782.0, "tmo_sec": 496.0}, {"fecha": "2026-07-06", "cola": "Facebook", "nuevos": 382, "encolados": 224, "descartados": 6, "casos_cerrados": 89, "vencidos": 5, "asignados_agente": 220, "asa_sec": 1121.0, "tmo_sec": 364.0}, {"fecha": "2026-07-06", "cola": "Instagram", "nuevos": 19, "encolados": 18, "descartados": 0, "casos_cerrados": 13, "vencidos": 0, "asignados_agente": 18, "asa_sec": 969.0, "tmo_sec": 348.0}, {"fecha": "2026-07-06", "cola": "Whatsapp", "nuevos": 35304, "encolados": 21836, "descartados": 533, "casos_cerrados": 4257, "vencidos": 313, "asignados_agente": 21603, "asa_sec": 783.0, "tmo_sec": 474.0}, {"fecha": "2026-07-06", "cola": "atencion diferenciada", "nuevos": 2401, "encolados": 1707, "descartados": 2, "casos_cerrados": 360, "vencidos": 0, "asignados_agente": 1708, "asa_sec": 613.0, "tmo_sec": 500.0}, {"fecha": "2026-07-07", "cola": "Facebook", "nuevos": 342, "encolados": 208, "descartados": 9, "casos_cerrados": 96, "vencidos": 7, "asignados_agente": 201, "asa_sec": 1042.0, "tmo_sec": 447.0}, {"fecha": "2026-07-07", "cola": "Instagram", "nuevos": 44, "encolados": 38, "descartados": 0, "casos_cerrados": 31, "vencidos": 0, "asignados_agente": 36, "asa_sec": 754.0, "tmo_sec": 316.0}, {"fecha": "2026-07-07", "cola": "Whatsapp", "nuevos": 31919, "encolados": 20512, "descartados": 419, "casos_cerrados": 3954, "vencidos": 279, "asignados_agente": 20354, "asa_sec": 687.0, "tmo_sec": 469.0}, {"fecha": "2026-07-07", "cola": "atencion diferenciada", "nuevos": 1964, "encolados": 1367, "descartados": 2, "casos_cerrados": 279, "vencidos": 0, "asignados_agente": 1370, "asa_sec": 591.0, "tmo_sec": 468.0}, {"fecha": "2026-07-08", "cola": "Facebook", "nuevos": 311, "encolados": 188, "descartados": 4, "casos_cerrados": 94, "vencidos": 2, "asignados_agente": 186, "asa_sec": 1359.0, "tmo_sec": 403.0}, {"fecha": "2026-07-08", "cola": "Instagram", "nuevos": 19, "encolados": 19, "descartados": 0, "casos_cerrados": 23, "vencidos": 0, "asignados_agente": 20, "asa_sec": 3769.0, "tmo_sec": 381.0}, {"fecha": "2026-07-08", "cola": "Whatsapp", "nuevos": 32554, "encolados": 20949, "descartados": 416, "casos_cerrados": 3842, "vencidos": 284, "asignados_agente": 20804, "asa_sec": 660.0, "tmo_sec": 471.0}, {"fecha": "2026-07-08", "cola": "atencion diferenciada", "nuevos": 2380, "encolados": 1692, "descartados": 5, "casos_cerrados": 298, "vencidos": 0, "asignados_agente": 1691, "asa_sec": 537.0, "tmo_sec": 457.0}, {"fecha": "2026-07-09", "cola": "Facebook", "nuevos": 205, "encolados": 143, "descartados": 8, "casos_cerrados": 84, "vencidos": 5, "asignados_agente": 139, "asa_sec": 1542.0, "tmo_sec": 310.0}, {"fecha": "2026-07-09", "cola": "Instagram", "nuevos": 24, "encolados": 23, "descartados": 0, "casos_cerrados": 20, "vencidos": 0, "asignados_agente": 23, "asa_sec": 6190.0, "tmo_sec": 232.0}, {"fecha": "2026-07-09", "cola": "Whatsapp", "nuevos": 18846, "encolados": 11144, "descartados": 532, "casos_cerrados": 2445, "vencidos": 428, "asignados_agente": 10687, "asa_sec": 954.0, "tmo_sec": 468.0}, {"fecha": "2026-07-09", "cola": "atencion diferenciada", "nuevos": 1076, "encolados": 771, "descartados": 3, "casos_cerrados": 180, "vencidos": 0, "asignados_agente": 773, "asa_sec": 739.0, "tmo_sec": 503.0}, {"fecha": "2026-07-10", "cola": "Facebook", "nuevos": 264, "encolados": 185, "descartados": 8, "casos_cerrados": 95, "vencidos": 7, "asignados_agente": 179, "asa_sec": 845.0, "tmo_sec": 390.0}, {"fecha": "2026-07-10", "cola": "Instagram", "nuevos": 9, "encolados": 9, "descartados": 0, "casos_cerrados": 12, "vencidos": 0, "asignados_agente": 9, "asa_sec": 640.0, "tmo_sec": 154.0}, {"fecha": "2026-07-10", "cola": "Whatsapp", "nuevos": 33161, "encolados": 21804, "descartados": 396, "casos_cerrados": 3893, "vencidos": 286, "asignados_agente": 21746, "asa_sec": 628.0, "tmo_sec": 450.0}, {"fecha": "2026-07-10", "cola": "atencion diferenciada", "nuevos": 2106, "encolados": 1554, "descartados": 1, "casos_cerrados": 317, "vencidos": 0, "asignados_agente": 1550, "asa_sec": 592.0, "tmo_sec": 462.0}, {"fecha": "2026-07-11", "cola": "Facebook", "nuevos": 159, "encolados": 107, "descartados": 6, "casos_cerrados": 67, "vencidos": 4, "asignados_agente": 104, "asa_sec": 1682.0, "tmo_sec": 349.0}, {"fecha": "2026-07-11", "cola": "Instagram", "nuevos": 30, "encolados": 27, "descartados": 0, "casos_cerrados": 28, "vencidos": 0, "asignados_agente": 27, "asa_sec": 1480.0, "tmo_sec": 301.0}, {"fecha": "2026-07-11", "cola": "Whatsapp", "nuevos": 18474, "encolados": 11073, "descartados": 251, "casos_cerrados": 2294, "vencidos": 122, "asignados_agente": 10894, "asa_sec": 1194.0, "tmo_sec": 459.0}, {"fecha": "2026-07-11", "cola": "atencion diferenciada", "nuevos": 1256, "encolados": 847, "descartados": 2, "casos_cerrados": 189, "vencidos": 0, "asignados_agente": 852, "asa_sec": 664.0, "tmo_sec": 440.0}, {"fecha": "2026-07-12", "cola": "Facebook", "nuevos": 113, "encolados": 71, "descartados": 3, "casos_cerrados": 54, "vencidos": 1, "asignados_agente": 70, "asa_sec": 1991.0, "tmo_sec": 362.0}, {"fecha": "2026-07-12", "cola": "Instagram", "nuevos": 24, "encolados": 21, "descartados": 0, "casos_cerrados": 5, "vencidos": 0, "asignados_agente": 20, "asa_sec": 8917.0, "tmo_sec": 191.0}, {"fecha": "2026-07-12", "cola": "Whatsapp", "nuevos": 13539, "encolados": 8357, "descartados": 373, "casos_cerrados": 1821, "vencidos": 261, "asignados_agente": 8086, "asa_sec": 1110.0, "tmo_sec": 431.0}, {"fecha": "2026-07-12", "cola": "atencion diferenciada", "nuevos": 861, "encolados": 622, "descartados": 1, "casos_cerrados": 113, "vencidos": 0, "asignados_agente": 624, "asa_sec": 539.0, "tmo_sec": 444.0}, {"fecha": "2026-07-13", "cola": "Facebook", "nuevos": 288, "encolados": 179, "descartados": 8, "casos_cerrados": 83, "vencidos": 5, "asignados_agente": 174, "asa_sec": 1303.0, "tmo_sec": 343.0}, {"fecha": "2026-07-13", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-13", "cola": "Instagram", "nuevos": 23, "encolados": 20, "descartados": 0, "casos_cerrados": 30, "vencidos": 0, "asignados_agente": 20, "asa_sec": 1799.0, "tmo_sec": 220.0}, {"fecha": "2026-07-13", "cola": "Whatsapp", "nuevos": 33177, "encolados": 21478, "descartados": 346, "casos_cerrados": 3961, "vencidos": 218, "asignados_agente": 21304, "asa_sec": 682.0, "tmo_sec": 469.0}, {"fecha": "2026-07-13", "cola": "atencion diferenciada", "nuevos": 2446, "encolados": 1726, "descartados": 4, "casos_cerrados": 335, "vencidos": 0, "asignados_agente": 1723, "asa_sec": 548.0, "tmo_sec": 466.0}, {"fecha": "2026-07-14", "cola": "Facebook", "nuevos": 1688, "encolados": 1464, "descartados": 81, "casos_cerrados": 1145, "vencidos": 73, "asignados_agente": 1396, "asa_sec": 1840.0, "tmo_sec": 243.0}, {"fecha": "2026-07-14", "cola": "Incidencia Edificio", "nuevos": 1, "encolados": 1, "descartados": 1, "casos_cerrados": 1, "vencidos": 0, "asignados_agente": 1, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-14", "cola": "Instagram", "nuevos": 543, "encolados": 531, "descartados": 1, "casos_cerrados": 475, "vencidos": 0, "asignados_agente": 529, "asa_sec": 3405.0, "tmo_sec": 196.0}, {"fecha": "2026-07-14", "cola": "Whatsapp", "nuevos": 31095, "encolados": 20184, "descartados": 341, "casos_cerrados": 3742, "vencidos": 215, "asignados_agente": 19988, "asa_sec": 663.0, "tmo_sec": 473.0}, {"fecha": "2026-07-14", "cola": "atencion diferenciada", "nuevos": 1616, "encolados": 1185, "descartados": 4, "casos_cerrados": 244, "vencidos": 0, "asignados_agente": 1188, "asa_sec": 548.0, "tmo_sec": 464.0}, {"fecha": "2026-07-14", "cola": "atencion diferenciada CABA", "nuevos": 661, "encolados": 389, "descartados": 0, "casos_cerrados": 154, "vencidos": 0, "asignados_agente": 389, "asa_sec": 639.0, "tmo_sec": 255.0}, {"fecha": "2026-07-15", "cola": "Facebook", "nuevos": 757, "encolados": 666, "descartados": 45, "casos_cerrados": 622, "vencidos": 42, "asignados_agente": 626, "asa_sec": 1277.0, "tmo_sec": 242.0}, {"fecha": "2026-07-15", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-15", "cola": "Instagram", "nuevos": 143, "encolados": 137, "descartados": 2, "casos_cerrados": 171, "vencidos": 0, "asignados_agente": 138, "asa_sec": 6708.0, "tmo_sec": 179.0}, {"fecha": "2026-07-15", "cola": "Whatsapp", "nuevos": 23825, "encolados": 17052, "descartados": 370, "casos_cerrados": 3159, "vencidos": 233, "asignados_agente": 17020, "asa_sec": 455.0, "tmo_sec": 413.0}, {"fecha": "2026-07-15", "cola": "atencion diferenciada", "nuevos": 1248, "encolados": 942, "descartados": 1, "casos_cerrados": 184, "vencidos": 0, "asignados_agente": 937, "asa_sec": 431.0, "tmo_sec": 402.0}, {"fecha": "2026-07-15", "cola": "atencion diferenciada CABA", "nuevos": 1369, "encolados": 869, "descartados": 2, "casos_cerrados": 201, "vencidos": 0, "asignados_agente": 867, "asa_sec": 513.0, "tmo_sec": 346.0}, {"fecha": "2026-07-16", "cola": "Facebook", "nuevos": 485, "encolados": 399, "descartados": 28, "casos_cerrados": 298, "vencidos": 22, "asignados_agente": 363, "asa_sec": 743.0, "tmo_sec": 253.0}, {"fecha": "2026-07-16", "cola": "Incidencia Edificio", "nuevos": 2, "encolados": 2, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-16", "cola": "Instagram", "nuevos": 65, "encolados": 61, "descartados": 0, "casos_cerrados": 59, "vencidos": 0, "asignados_agente": 56, "asa_sec": 4895.0, "tmo_sec": 174.0}, {"fecha": "2026-07-16", "cola": "Whatsapp", "nuevos": 26381, "encolados": 19235, "descartados": 233, "casos_cerrados": 3098, "vencidos": 72, "asignados_agente": 18947, "asa_sec": 427.0, "tmo_sec": 383.0}, {"fecha": "2026-07-16", "cola": "atencion diferenciada", "nuevos": 1592, "encolados": 1285, "descartados": 1, "casos_cerrados": 234, "vencidos": 0, "asignados_agente": 1281, "asa_sec": 457.0, "tmo_sec": 391.0}, {"fecha": "2026-07-16", "cola": "atencion diferenciada CABA", "nuevos": 1361, "encolados": 948, "descartados": 4, "casos_cerrados": 149, "vencidos": 0, "asignados_agente": 954, "asa_sec": 347.0, "tmo_sec": 345.0}, {"fecha": "2026-07-17", "cola": "Facebook", "nuevos": 400, "encolados": 291, "descartados": 33, "casos_cerrados": 214, "vencidos": 29, "asignados_agente": 278, "asa_sec": 1407.0, "tmo_sec": 287.0}, {"fecha": "2026-07-17", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-17", "cola": "Instagram", "nuevos": 53, "encolados": 53, "descartados": 0, "casos_cerrados": 59, "vencidos": 0, "asignados_agente": 57, "asa_sec": 5642.0, "tmo_sec": 246.0}, {"fecha": "2026-07-17", "cola": "Whatsapp", "nuevos": 31489, "encolados": 20638, "descartados": 484, "casos_cerrados": 4042, "vencidos": 313, "asignados_agente": 20466, "asa_sec": 624.0, "tmo_sec": 474.0}, {"fecha": "2026-07-17", "cola": "atencion diferenciada", "nuevos": 1742, "encolados": 1264, "descartados": 1, "casos_cerrados": 252, "vencidos": 0, "asignados_agente": 1266, "asa_sec": 545.0, "tmo_sec": 436.0}, {"fecha": "2026-07-17", "cola": "atencion diferenciada CABA", "nuevos": 1772, "encolados": 1102, "descartados": 6, "casos_cerrados": 252, "vencidos": 0, "asignados_agente": 1103, "asa_sec": 524.0, "tmo_sec": 360.0}, {"fecha": "2026-07-18", "cola": "Facebook", "nuevos": 255, "encolados": 176, "descartados": 12, "casos_cerrados": 128, "vencidos": 8, "asignados_agente": 157, "asa_sec": 1408.0, "tmo_sec": 331.0}, {"fecha": "2026-07-18", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-18", "cola": "Instagram", "nuevos": 59, "encolados": 35, "descartados": 0, "casos_cerrados": 30, "vencidos": 0, "asignados_agente": 32, "asa_sec": 4140.0, "tmo_sec": 157.0}, {"fecha": "2026-07-18", "cola": "Whatsapp", "nuevos": 17019, "encolados": 9906, "descartados": 331, "casos_cerrados": 2181, "vencidos": 237, "asignados_agente": 9584, "asa_sec": 1114.0, "tmo_sec": 496.0}, {"fecha": "2026-07-18", "cola": "atencion diferenciada", "nuevos": 1278, "encolados": 892, "descartados": 1, "casos_cerrados": 197, "vencidos": 0, "asignados_agente": 894, "asa_sec": 660.0, "tmo_sec": 475.0}, {"fecha": "2026-07-18", "cola": "atencion diferenciada CABA", "nuevos": 772, "encolados": 445, "descartados": 3, "casos_cerrados": 111, "vencidos": 0, "asignados_agente": 435, "asa_sec": 1382.0, "tmo_sec": 396.0}, {"fecha": "2026-07-19", "cola": "Facebook", "nuevos": 435, "encolados": 274, "descartados": 26, "casos_cerrados": 235, "vencidos": 21, "asignados_agente": 266, "asa_sec": 3781.0, "tmo_sec": 232.0}, {"fecha": "2026-07-19", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-19", "cola": "Instagram", "nuevos": 98, "encolados": 83, "descartados": 0, "casos_cerrados": 65, "vencidos": 0, "asignados_agente": 79, "asa_sec": 4635.0, "tmo_sec": 191.0}, {"fecha": "2026-07-19", "cola": "Whatsapp", "nuevos": 11824, "encolados": 6592, "descartados": 522, "casos_cerrados": 1929, "vencidos": 423, "asignados_agente": 6255, "asa_sec": 1656.0, "tmo_sec": 484.0}, {"fecha": "2026-07-19", "cola": "atencion diferenciada", "nuevos": 707, "encolados": 539, "descartados": 0, "casos_cerrados": 97, "vencidos": 0, "asignados_agente": 539, "asa_sec": 608.0, "tmo_sec": 447.0}, {"fecha": "2026-07-19", "cola": "atencion diferenciada CABA", "nuevos": 962, "encolados": 520, "descartados": 11, "casos_cerrados": 140, "vencidos": 0, "asignados_agente": 513, "asa_sec": 942.0, "tmo_sec": 278.0}, {"fecha": "2026-07-20", "cola": "Facebook", "nuevos": 245, "encolados": 192, "descartados": 13, "casos_cerrados": 121, "vencidos": 12, "asignados_agente": 179, "asa_sec": 1539.0, "tmo_sec": 346.0}, {"fecha": "2026-07-20", "cola": "Incidencia Edificio", "nuevos": 2, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-20", "cola": "Instagram", "nuevos": 41, "encolados": 39, "descartados": 0, "casos_cerrados": 49, "vencidos": 0, "asignados_agente": 42, "asa_sec": 5878.0, "tmo_sec": 209.0}, {"fecha": "2026-07-20", "cola": "Whatsapp", "nuevos": 31254, "encolados": 20664, "descartados": 370, "casos_cerrados": 3881, "vencidos": 236, "asignados_agente": 20493, "asa_sec": 629.0, "tmo_sec": 476.0}, {"fecha": "2026-07-20", "cola": "atencion diferenciada", "nuevos": 1218, "encolados": 946, "descartados": 2, "casos_cerrados": 206, "vencidos": 0, "asignados_agente": 944, "asa_sec": 428.0, "tmo_sec": 366.0}, {"fecha": "2026-07-20", "cola": "atencion diferenciada CABA", "nuevos": 1106, "encolados": 766, "descartados": 10, "casos_cerrados": 168, "vencidos": 0, "asignados_agente": 764, "asa_sec": 1862.0, "tmo_sec": 322.0}, {"fecha": "2026-07-21", "cola": "Facebook", "nuevos": 239, "encolados": 170, "descartados": 6, "casos_cerrados": 97, "vencidos": 4, "asignados_agente": 165, "asa_sec": 1579.0, "tmo_sec": 298.0}, {"fecha": "2026-07-21", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-21", "cola": "Instagram", "nuevos": 32, "encolados": 29, "descartados": 0, "casos_cerrados": 29, "vencidos": 0, "asignados_agente": 29, "asa_sec": 3541.0, "tmo_sec": 187.0}, {"fecha": "2026-07-21", "cola": "Whatsapp", "nuevos": 32656, "encolados": 21090, "descartados": 421, "casos_cerrados": 4038, "vencidos": 222, "asignados_agente": 20860, "asa_sec": 659.0, "tmo_sec": 469.0}, {"fecha": "2026-07-21", "cola": "atencion diferenciada", "nuevos": 2316, "encolados": 1674, "descartados": 2, "casos_cerrados": 354, "vencidos": 0, "asignados_agente": 1673, "asa_sec": 539.0, "tmo_sec": 424.0}, {"fecha": "2026-07-21", "cola": "atencion diferenciada CABA", "nuevos": 928, "encolados": 575, "descartados": 2, "casos_cerrados": 161, "vencidos": 0, "asignados_agente": 595, "asa_sec": 1821.0, "tmo_sec": 394.0}, {"fecha": "2026-07-22", "cola": "Facebook", "nuevos": 228, "encolados": 153, "descartados": 14, "casos_cerrados": 97, "vencidos": 8, "asignados_agente": 144, "asa_sec": 1338.0, "tmo_sec": 291.0}, {"fecha": "2026-07-22", "cola": "Incidencia Edificio", "nuevos": 4, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-22", "cola": "Instagram", "nuevos": 44, "encolados": 42, "descartados": 0, "casos_cerrados": 38, "vencidos": 0, "asignados_agente": 42, "asa_sec": 3833.0, "tmo_sec": 217.0}, {"fecha": "2026-07-22", "cola": "Whatsapp", "nuevos": 32376, "encolados": 21158, "descartados": 502, "casos_cerrados": 4143, "vencidos": 283, "asignados_agente": 20899, "asa_sec": 625.0, "tmo_sec": 464.0}, {"fecha": "2026-07-22", "cola": "atencion diferenciada", "nuevos": 1931, "encolados": 1368, "descartados": 1, "casos_cerrados": 288, "vencidos": 0, "asignados_agente": 1370, "asa_sec": 525.0, "tmo_sec": 449.0}, {"fecha": "2026-07-22", "cola": "atencion diferenciada CABA", "nuevos": 922, "encolados": 631, "descartados": 2, "casos_cerrados": 152, "vencidos": 0, "asignados_agente": 635, "asa_sec": 560.0, "tmo_sec": 351.0}, {"fecha": "2026-07-23", "cola": "Facebook", "nuevos": 229, "encolados": 170, "descartados": 13, "casos_cerrados": 81, "vencidos": 10, "asignados_agente": 161, "asa_sec": 883.0, "tmo_sec": 394.0}, {"fecha": "2026-07-23", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-23", "cola": "Instagram", "nuevos": 33, "encolados": 33, "descartados": 0, "casos_cerrados": 35, "vencidos": 0, "asignados_agente": 31, "asa_sec": 9259.0, "tmo_sec": 182.0}, {"fecha": "2026-07-23", "cola": "Whatsapp", "nuevos": 33055, "encolados": 22070, "descartados": 520, "casos_cerrados": 4125, "vencidos": 333, "asignados_agente": 21801, "asa_sec": 539.0, "tmo_sec": 436.0}, {"fecha": "2026-07-23", "cola": "atencion diferenciada", "nuevos": 2019, "encolados": 1497, "descartados": 1, "casos_cerrados": 310, "vencidos": 0, "asignados_agente": 1498, "asa_sec": 451.0, "tmo_sec": 408.0}, {"fecha": "2026-07-23", "cola": "atencion diferenciada CABA", "nuevos": 459, "encolados": 306, "descartados": 0, "casos_cerrados": 103, "vencidos": 0, "asignados_agente": 306, "asa_sec": 582.0, "tmo_sec": 323.0}, {"fecha": "2026-07-24", "cola": "Facebook", "nuevos": 457, "encolados": 257, "descartados": 12, "casos_cerrados": 109, "vencidos": 6, "asignados_agente": 251, "asa_sec": 1654.0, "tmo_sec": 458.0}, {"fecha": "2026-07-24", "cola": "Incidencia Edificio", "nuevos": 3, "encolados": 2, "descartados": 3, "casos_cerrados": 3, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-24", "cola": "Instagram", "nuevos": 21, "encolados": 16, "descartados": 0, "casos_cerrados": 16, "vencidos": 0, "asignados_agente": 16, "asa_sec": 3997.0, "tmo_sec": 304.0}, {"fecha": "2026-07-24", "cola": "Whatsapp", "nuevos": 33022, "encolados": 19383, "descartados": 738, "casos_cerrados": 3952, "vencidos": 324, "asignados_agente": 19166, "asa_sec": 1056.0, "tmo_sec": 530.0}, {"fecha": "2026-07-24", "cola": "atencion diferenciada", "nuevos": 1699, "encolados": 1144, "descartados": 1, "casos_cerrados": 263, "vencidos": 0, "asignados_agente": 1145, "asa_sec": 692.0, "tmo_sec": 539.0}, {"fecha": "2026-07-24", "cola": "atencion diferenciada CABA", "nuevos": 737, "encolados": 404, "descartados": 0, "casos_cerrados": 93, "vencidos": 0, "asignados_agente": 378, "asa_sec": 1021.0, "tmo_sec": 418.0}, {"fecha": "2026-07-25", "cola": "Facebook", "nuevos": 172, "encolados": 102, "descartados": 14, "casos_cerrados": 90, "vencidos": 10, "asignados_agente": 92, "asa_sec": 2739.0, "tmo_sec": 315.0}, {"fecha": "2026-07-25", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-25", "cola": "Instagram", "nuevos": 10, "encolados": 10, "descartados": 0, "casos_cerrados": 11, "vencidos": 0, "asignados_agente": 10, "asa_sec": 4094.0, "tmo_sec": 230.0}, {"fecha": "2026-07-25", "cola": "Whatsapp", "nuevos": 17058, "encolados": 9897, "descartados": 554, "casos_cerrados": 2346, "vencidos": 413, "asignados_agente": 9507, "asa_sec": 1378.0, "tmo_sec": 510.0}, {"fecha": "2026-07-25", "cola": "atencion diferenciada", "nuevos": 1529, "encolados": 997, "descartados": 3, "casos_cerrados": 224, "vencidos": 0, "asignados_agente": 999, "asa_sec": 749.0, "tmo_sec": 505.0}, {"fecha": "2026-07-25", "cola": "atencion diferenciada CABA", "nuevos": 638, "encolados": 295, "descartados": 6, "casos_cerrados": 121, "vencidos": 0, "asignados_agente": 284, "asa_sec": 4722.0, "tmo_sec": 377.0}, {"fecha": "2026-07-26", "cola": "Facebook", "nuevos": 130, "encolados": 74, "descartados": 5, "casos_cerrados": 40, "vencidos": 3, "asignados_agente": 60, "asa_sec": 2382.0, "tmo_sec": 475.0}, {"fecha": "2026-07-26", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-26", "cola": "Instagram", "nuevos": 10, "encolados": 9, "descartados": 0, "casos_cerrados": 7, "vencidos": 0, "asignados_agente": 8, "asa_sec": 2794.0, "tmo_sec": 324.0}, {"fecha": "2026-07-26", "cola": "Whatsapp", "nuevos": 14067, "encolados": 8176, "descartados": 539, "casos_cerrados": 1934, "vencidos": 428, "asignados_agente": 7711, "asa_sec": 1276.0, "tmo_sec": 473.0}, {"fecha": "2026-07-26", "cola": "atencion diferenciada", "nuevos": 737, "encolados": 446, "descartados": 4, "casos_cerrados": 119, "vencidos": 0, "asignados_agente": 448, "asa_sec": 842.0, "tmo_sec": 523.0}, {"fecha": "2026-07-26", "cola": "atencion diferenciada CABA", "nuevos": 1221, "encolados": 514, "descartados": 4, "casos_cerrados": 99, "vencidos": 0, "asignados_agente": 446, "asa_sec": 4453.0, "tmo_sec": 373.0}, {"fecha": "2026-07-27", "cola": "Facebook", "nuevos": 197, "encolados": 120, "descartados": 20, "casos_cerrados": 82, "vencidos": 16, "asignados_agente": 113, "asa_sec": 4243.0, "tmo_sec": 373.0}, {"fecha": "2026-07-27", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-27", "cola": "Instagram", "nuevos": 9, "encolados": 9, "descartados": 0, "casos_cerrados": 9, "vencidos": 0, "asignados_agente": 9, "asa_sec": 8150.0, "tmo_sec": 182.0}, {"fecha": "2026-07-27", "cola": "Whatsapp", "nuevos": 31551, "encolados": 19415, "descartados": 554, "casos_cerrados": 3745, "vencidos": 323, "asignados_agente": 19151, "asa_sec": 853.0, "tmo_sec": 502.0}, {"fecha": "2026-07-27", "cola": "atencion diferenciada", "nuevos": 2386, "encolados": 1701, "descartados": 1, "casos_cerrados": 351, "vencidos": 0, "asignados_agente": 1700, "asa_sec": 593.0, "tmo_sec": 498.0}, {"fecha": "2026-07-27", "cola": "atencion diferenciada CABA", "nuevos": 1158, "encolados": 711, "descartados": 17, "casos_cerrados": 253, "vencidos": 0, "asignados_agente": 808, "asa_sec": 6389.0, "tmo_sec": 556.0}, {"fecha": "2026-07-28", "cola": "Facebook", "nuevos": 370, "encolados": 235, "descartados": 14, "casos_cerrados": 111, "vencidos": 11, "asignados_agente": 216, "asa_sec": 2213.0, "tmo_sec": 455.0}, {"fecha": "2026-07-28", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-28", "cola": "Instagram", "nuevos": 20, "encolados": 18, "descartados": 0, "casos_cerrados": 17, "vencidos": 0, "asignados_agente": 18, "asa_sec": 5937.0, "tmo_sec": 228.0}, {"fecha": "2026-07-28", "cola": "Whatsapp", "nuevos": 31546, "encolados": 20120, "descartados": 468, "casos_cerrados": 3812, "vencidos": 317, "asignados_agente": 19846, "asa_sec": 782.0, "tmo_sec": 488.0}, {"fecha": "2026-07-28", "cola": "atencion diferenciada", "nuevos": 2146, "encolados": 1508, "descartados": 1, "casos_cerrados": 360, "vencidos": 0, "asignados_agente": 1504, "asa_sec": 587.0, "tmo_sec": 460.0}, {"fecha": "2026-07-28", "cola": "atencion diferenciada CABA", "nuevos": 1321, "encolados": 870, "descartados": 3, "casos_cerrados": 228, "vencidos": 0, "asignados_agente": 873, "asa_sec": 673.0, "tmo_sec": 416.0}, {"fecha": "2026-07-29", "cola": "Facebook", "nuevos": 267, "encolados": 189, "descartados": 19, "casos_cerrados": 103, "vencidos": 13, "asignados_agente": 177, "asa_sec": 1357.0, "tmo_sec": 428.0}, {"fecha": "2026-07-29", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-29", "cola": "Instagram", "nuevos": 12, "encolados": 12, "descartados": 0, "casos_cerrados": 12, "vencidos": 0, "asignados_agente": 11, "asa_sec": 3255.0, "tmo_sec": 328.0}, {"fecha": "2026-07-29", "cola": "Whatsapp", "nuevos": 31577, "encolados": 20022, "descartados": 438, "casos_cerrados": 3739, "vencidos": 306, "asignados_agente": 19720, "asa_sec": 770.0, "tmo_sec": 497.0}, {"fecha": "2026-07-29", "cola": "atencion diferenciada", "nuevos": 1957, "encolados": 1427, "descartados": 6, "casos_cerrados": 337, "vencidos": 0, "asignados_agente": 1432, "asa_sec": 715.0, "tmo_sec": 506.0}, {"fecha": "2026-07-29", "cola": "atencion diferenciada CABA", "nuevos": 711, "encolados": 449, "descartados": 0, "casos_cerrados": 118, "vencidos": 0, "asignados_agente": 451, "asa_sec": 876.0, "tmo_sec": 475.0}, {"fecha": "2026-07-30", "cola": "Facebook", "nuevos": 224, "encolados": 156, "descartados": 17, "casos_cerrados": 89, "vencidos": 14, "asignados_agente": 152, "asa_sec": 1445.0, "tmo_sec": 350.0}, {"fecha": "2026-07-30", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 1, "casos_cerrados": 1, "vencidos": 0, "asignados_agente": 1, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-30", "cola": "Instagram", "nuevos": 10, "encolados": 10, "descartados": 0, "casos_cerrados": 10, "vencidos": 0, "asignados_agente": 10, "asa_sec": 593.0, "tmo_sec": 101.0}, {"fecha": "2026-07-30", "cola": "Whatsapp", "nuevos": 32998, "encolados": 21325, "descartados": 474, "casos_cerrados": 4031, "vencidos": 320, "asignados_agente": 21141, "asa_sec": 664.0, "tmo_sec": 466.0}, {"fecha": "2026-07-30", "cola": "atencion diferenciada", "nuevos": 1384, "encolados": 1001, "descartados": 3, "casos_cerrados": 258, "vencidos": 0, "asignados_agente": 1007, "asa_sec": 535.0, "tmo_sec": 474.0}, {"fecha": "2026-07-30", "cola": "atencion diferenciada CABA", "nuevos": 1002, "encolados": 672, "descartados": 3, "casos_cerrados": 169, "vencidos": 0, "asignados_agente": 672, "asa_sec": 594.0, "tmo_sec": 432.0}, {"fecha": "2026-07-31", "cola": "Facebook", "nuevos": 241, "encolados": 158, "descartados": 9, "casos_cerrados": 77, "vencidos": 7, "asignados_agente": 155, "asa_sec": 2797.0, "tmo_sec": 503.0}, {"fecha": "2026-07-31", "cola": "Incidencia Edificio", "nuevos": 0, "encolados": 0, "descartados": 0, "casos_cerrados": 0, "vencidos": 0, "asignados_agente": 0, "asa_sec": 0.0, "tmo_sec": 0.0}, {"fecha": "2026-07-31", "cola": "Instagram", "nuevos": 8, "encolados": 8, "descartados": 0, "casos_cerrados": 8, "vencidos": 0, "asignados_agente": 8, "asa_sec": 1760.0, "tmo_sec": 225.0}, {"fecha": "2026-07-31", "cola": "Whatsapp", "nuevos": 28186, "encolados": 18261, "descartados": 405, "casos_cerrados": 3711, "vencidos": 277, "asignados_agente": 18209, "asa_sec": 800.0, "tmo_sec": 511.0}, {"fecha": "2026-07-31", "cola": "atencion diferenciada", "nuevos": 1920, "encolados": 1320, "descartados": 0, "casos_cerrados": 280, "vencidos": 0, "asignados_agente": 1319, "asa_sec": 656.0, "tmo_sec": 538.0}, {"fecha": "2026-07-31", "cola": "atencion diferenciada CABA", "nuevos": 1173, "encolados": 742, "descartados": 3, "casos_cerrados": 195, "vencidos": 0, "asignados_agente": 743, "asa_sec": 625.0, "tmo_sec": 433.0}]} /*FROZEN_END*/;
+
+function flattenFrozen(frozen){
+  return Object.values(frozen).reduce((acc, arr) => acc.concat(arr), []);
+}
+
+let RAW_ROWS_COLA = flattenFrozen(FROZEN_MONTHS_COLA);
+let SUPABASE_OPEN_MONTHS_COLA = {};
+
+function buildAggRow(rowsForGroup){
+  let nuevos=0, encolados=0, descartados=0, casos_cerrados=0, vencidos=0, asignados=0;
+  let asaSum=0, asaCount=0, tmoSum=0, tmoCount=0;
+  rowsForGroup.forEach(r=>{
+    nuevos += r.nuevos; encolados += r.encolados; descartados += r.descartados;
+    casos_cerrados += r.casos_cerrados; vencidos += r.vencidos; asignados += r.asignados_agente;
+    if(r.asa_sec!==null && r.asa_sec!==undefined){asaSum+=r.asa_sec; asaCount++;}
+    if(r.tmo_sec!==null && r.tmo_sec!==undefined){tmoSum+=r.tmo_sec; tmoCount++;}
+  });
+  return {
+    cola: null,
+    nuevos, casos_cerrados, encolados, descartados,
+    abandono_pct: nuevos>0 ? +(descartados/nuevos*100).toFixed(1) : 0,
+    vencidos,
+    asignados_agente: asignados,
+    asignado_pct: nuevos>0 ? +(asignados/nuevos*100).toFixed(1) : 0,
+    asa_sec: asaCount>0 ? Math.round(asaSum/asaCount) : null,
+    tmo_sec: tmoCount>0 ? Math.round(tmoSum/tmoCount) : null,
+  };
+}
+
+function computeDataset(rows){
+  const sorted = rows.slice().sort((a,b)=> a.fecha<b.fecha ? -1 : (a.fecha>b.fecha ? 1 : 0));
+  const mesesOrder = [];
+  sorted.forEach(r=>{
+    const mn = monthNombre(r.fecha);
+    if(!mesesOrder.includes(mn)) mesesOrder.push(mn);
+  });
+
+  const monthly={}, daily={}, day_labels={}, month_avg={};
+
+  mesesOrder.forEach(mes=>{
+    const subRows = sorted.filter(r=>monthNombre(r.fecha)===mes);
+    const colasInMonth = Array.from(new Set(subRows.map(r=>r.cola)));
+
+    let monthRows = colasInMonth.map(cola=>{
+      const agg = buildAggRow(subRows.filter(r=>r.cola===cola));
+      agg.cola = cola;
+      return agg;
+    });
+    monthRows.sort((a,b)=>b.nuevos-a.nuevos);
+    monthly[mes] = monthRows;
+
+    const fechas = Array.from(new Set(subRows.map(r=>r.fecha))).sort();
+    const days = {};
+    fechas.forEach(fecha=>{
+      const grp = subRows.filter(r=>r.fecha===fecha);
+      let dayRows = grp.map(r=>{
+        const agg = buildAggRow([r]);
+        agg.cola = r.cola;
+        return agg;
+      });
+      dayRows.sort((a,b)=>b.nuevos-a.nuevos);
+      days[fecha] = dayRows;
+    });
+    daily[mes] = days;
+    day_labels[mes] = fechas.map(f=>[f, dayLabel(f)]);
+
+    const ndias = fechas.length;
+    const totNuevos = subRows.reduce((s,r)=>s+r.nuevos,0);
+    const porCola = {};
+    colasInMonth.forEach(cola=>{
+      const sum = subRows.filter(r=>r.cola===cola).reduce((s,r)=>s+r.nuevos,0);
+      porCola[cola] = +(sum/ndias).toFixed(1);
+    });
+    month_avg[mes] = {dias: ndias, promedio_total: +(totNuevos/ndias).toFixed(1), por_cola: porCola};
+  });
+
+  return {monthly, daily, day_labels, month_avg, mesesOrder};
+}
+
+let DATA_COLA = computeDataset(RAW_ROWS_COLA);
+let MONTHS_COLA = DATA_COLA.mesesOrder;
+let currentMonthCola = MONTHS_COLA.length ? MONTHS_COLA[MONTHS_COLA.length-1] : null;
+let currentDayCola = null;
+
+function tableHTML(rows){
+  if(!rows || rows.length===0){
+    return '<div class="empty-state">Sin datos para este período.</div>';
+  }
+  const totalNuevos = rows.reduce((a,r)=>a+r.nuevos,0);
+  const totalCerrados = rows.reduce((a,r)=>a+r.casos_cerrados,0);
+  const totalVencidos = rows.reduce((a,r)=>a+r.vencidos,0);
+  const totalDescartados = rows.reduce((a,r)=>a+r.descartados,0);
+  const abandonoTotal = totalNuevos>0 ? (totalDescartados/totalNuevos*100) : 0;
+  const totalAsignados = rows.reduce((a,r)=>a+r.asignados_agente,0);
+  const asignadoTotalPct = totalNuevos>0 ? (totalAsignados/totalNuevos*100) : 0;
+
+  const body = rows.map(r => (
+    '<tr>' +
+      '<td class="cola">' + r.cola + '</td>' +
+      '<td class="num">' + fmtNum(r.nuevos) + '</td>' +
+      '<td class="num">' + fmtNum(r.asignados_agente) + ' <span style="color:var(--text-muted);font-size:12px;">(' + r.asignado_pct.toFixed(1) + '%)</span></td>' +
+      '<td class="num">' + fmtNum(r.casos_cerrados) + '</td>' +
+      '<td class="num">' + fmtTime(r.asa_sec) + '</td>' +
+      '<td class="num">' + fmtTime(r.tmo_sec) + '</td>' +
+      '<td class="num">' + abandonoPill(r.abandono_pct) + '</td>' +
+      '<td class="num">' + fmtNum(r.vencidos) + '</td>' +
+    '</tr>'
+  )).join('');
+
+  return (
+    '<table>' +
+      '<thead><tr>' +
+        '<th>Cola</th><th class="num">Nuevos</th><th class="num">Asignados a agente</th>' +
+        '<th class="num">Casos cerrados</th><th class="num">ASA (m:s)</th><th class="num">TMO (m:s)</th>' +
+        '<th class="num">Abandono</th><th class="num">Vencidos</th>' +
+      '</tr></thead>' +
+      '<tbody>' + body + '</tbody>' +
+      '<tfoot><tr>' +
+        '<td>Total</td>' +
+        '<td class="num">' + fmtNum(totalNuevos) + '</td>' +
+        '<td class="num">' + fmtNum(totalAsignados) + ' <span style="color:var(--text-muted);font-weight:400;font-size:12px;">(' + asignadoTotalPct.toFixed(1) + '%)</span></td>' +
+        '<td class="num">' + fmtNum(totalCerrados) + '</td><td class="num">—</td><td class="num">—</td>' +
+        '<td class="num">' + abandonoTotal.toFixed(1) + '%</td>' +
+        '<td class="num">' + fmtNum(totalVencidos) + '</td>' +
+      '</tr></tfoot>' +
+    '</table>'
+  );
+}
+
+function renderColaTabs(){
+  const wrap = document.getElementById('monthTabsCola');
+  wrap.innerHTML = MONTHS_COLA.map(m =>
+    '<button class="month-tab' + (m===currentMonthCola ? ' active' : '') + '" data-month="' + m + '">' + m + '</button>'
+  ).join('');
+  wrap.querySelectorAll('.month-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentMonthCola = btn.dataset.month;
+      currentDayCola = null;
+      renderColaAll();
+    });
+  });
+}
+
+function renderColaKPIs(){
+  const rows = DATA_COLA.monthly[currentMonthCola];
+  const totalNuevos = rows.reduce((a,r)=>a+r.nuevos,0);
+  const totalCerrados = rows.reduce((a,r)=>a+r.casos_cerrados,0);
+  const totalVencidos = rows.reduce((a,r)=>a+r.vencidos,0);
+  const totalDescartados = rows.reduce((a,r)=>a+r.descartados,0);
+  const abandonoGlobal = totalNuevos>0 ? (totalDescartados/totalNuevos*100) : 0;
+  const kpis = [
+    {label:"Mensajes nuevos", value: fmtNum(totalNuevos)},
+    {label:"Casos cerrados", value: fmtNum(totalCerrados)},
+    {label:"Tasa de abandono", value: abandonoGlobal.toFixed(1) + "%"},
+    {label:"Mensajes vencidos", value: fmtNum(totalVencidos)}
+  ];
+  document.getElementById('kpiRow').innerHTML = kpis.map(k =>
+    '<div class="kpi"><p class="label">' + k.label + '</p><p class="value">' + k.value + '</p></div>'
+  ).join('');
+}
+
+function renderColaAvgCompare(){
+  const order = MONTHS_COLA;
+  const avgs = order.map(m => DATA_COLA.month_avg[m]);
+  const items = order.map((m,i) => {
+    const cur = avgs[i];
+    let deltaHTML = '';
+    if(i>0){
+      const prev = avgs[i-1];
+      const delta = ((cur.promedio_total - prev.promedio_total)/prev.promedio_total*100);
+      const cls = delta>=0 ? 'up' : 'down';
+      const arrow = delta>=0 ? '▲' : '▼';
+      deltaHTML = '<p class="m-delta ' + cls + '">' + arrow + ' ' + Math.abs(delta).toFixed(1) + '% vs ' + order[i-1] + '</p>';
+    }
+    return (
+      '<div class="avg-total-item">' +
+        '<p class="m-label">' + m + '</p>' +
+        '<p class="m-value">' + fmtNum(Math.round(cur.promedio_total)) + '/día</p>' +
+        deltaHTML +
+        '<p class="m-days">promedio sobre ' + cur.dias + ' días' + (cur.dias<20 ? ' (mes incompleto)' : '') + '</p>' +
+      '</div>'
+    );
+  }).join('');
+
+  const allColas = new Set();
+  order.forEach(m => Object.keys(DATA_COLA.month_avg[m].por_cola).forEach(c=>allColas.add(c)));
+  const colaRows = Array.from(allColas).sort((a,b)=>{
+    const totA = order.reduce((s,m)=>s+(DATA_COLA.month_avg[m].por_cola[a]||0),0);
+    const totB = order.reduce((s,m)=>s+(DATA_COLA.month_avg[m].por_cola[b]||0),0);
+    return totB - totA;
+  }).map(cola=>{
+    const cells = order.map(m=>{
+      const v = DATA_COLA.month_avg[m].por_cola[cola];
+      return '<td class="num">' + (v!==undefined ? fmtNum(Math.round(v)) : '—') + '</td>';
+    }).join('');
+    return '<tr><td class="cola">' + cola + '</td>' + cells + '</tr>';
+  }).join('');
+
+  const colaTable = (
+    '<table style="margin-top:4px;">' +
+      '<thead><tr><th>Cola — promedio/día</th>' + order.map(m=>'<th class="num">'+m+'</th>').join('') + '</tr></thead>' +
+      '<tbody>' + colaRows + '</tbody>' +
+    '</table>'
+  );
+
+  document.getElementById('avgCompareWrap').innerHTML = (
+    '<div class="avg-card">' + '<div class="avg-total-row">' + items + '</div>' + colaTable + '</div>'
+  );
+}
+
+function renderColaMonthlyTable(){
+  document.getElementById('monthlyTitle').textContent = 'Resumen de ' + currentMonthCola + ' por cola';
+  document.getElementById('monthlyTableWrap').innerHTML = tableHTML(DATA_COLA.monthly[currentMonthCola]);
+}
+
+function renderColaDayPicker(){
+  const labels = DATA_COLA.day_labels[currentMonthCola];
+  if(!currentDayCola && labels.length>0){ currentDayCola = labels[0][0]; }
+  const wrap = document.getElementById('dayPicker');
+  wrap.innerHTML = labels.map(([iso,label])=>{
+    const d = new Date(iso + "T00:00:00");
+    const isWeekend = (d.getDay()===0 || d.getDay()===6);
+    const activeCls = (iso===currentDayCola) ? ' active' : '';
+    const weekendCls = isWeekend ? ' weekend' : '';
+    return '<button class="day-pill' + activeCls + weekendCls + '" data-day="' + iso + '">' + label + '</button>';
+  }).join('');
+  wrap.querySelectorAll('.day-pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentDayCola = btn.dataset.day;
+      renderColaDayPicker();
+      renderColaDailyTable();
+    });
+  });
+}
+
+function renderColaDailyTable(){
+  const rows = DATA_COLA.daily[currentMonthCola][currentDayCola];
+  document.getElementById('dailyTableWrap').innerHTML = tableHTML(rows);
+}
+
+function renderColaAll(){
+  renderColaTabs();
+  if(MONTHS_COLA.length===0){
+    document.getElementById('kpiRow').innerHTML = '';
+    document.getElementById('avgCompareWrap').innerHTML = '<div class="empty-state">Todavía no hay datos congelados ni conexión con Supabase. Esperando...</div>';
+    document.getElementById('monthlyTitle').textContent = 'Resumen por cola';
+    document.getElementById('monthlyTableWrap').innerHTML = '<div class="empty-state">Sin datos por ahora.</div>';
+    document.getElementById('dayPicker').innerHTML = '';
+    document.getElementById('dailyTableWrap').innerHTML = '';
+    return;
+  }
+  renderColaAvgCompare();
+  renderColaKPIs();
+  renderColaMonthlyTable();
+  renderColaDayPicker();
+  renderColaDailyTable();
+}
+
+async function fetchAllRows(table, columns){
+  // Supabase/PostgREST devuelve como maximo ~1000 filas por consulta si no se
+  // pagina explicitamente. Esto trae TODO el contenido de la tabla en lotes.
+  let all = [];
+  let from = 0;
+  const pageSize = 1000;
+  while(true){
+    const { data, error } = await supabaseClient
+      .from(table)
+      .select(columns)
+      .order('fecha', { ascending: true })
+      .order('id', { ascending: true })
+      .range(from, from + pageSize - 1);
+    if(error) throw error;
+    if(!data || data.length === 0) break;
+    all = all.concat(data);
+    if(data.length < pageSize) break;
+    from += pageSize;
+  }
+  return all;
+}
+
+async function loadColaFromSupabase(){
+  if(!supabaseClient) return false;
+  try{
+    const data = await fetchAllRows('dc_datos', 'fecha,cola,nuevos,encolados,descartados,casos_cerrados,vencidos,asignados_agente,asa_sec,tmo_sec');
+    if(data && data.length>0){
+      RAW_ROWS_COLA = mergeRows(RAW_ROWS_COLA, data, r=>r.fecha+'|'+r.cola);
+      DATA_COLA = computeDataset(RAW_ROWS_COLA);
+      MONTHS_COLA = DATA_COLA.mesesOrder;
+      currentMonthCola = MONTHS_COLA[MONTHS_COLA.length-1];
+      currentDayCola = null;
+
+      SUPABASE_OPEN_MONTHS_COLA = {};
+      data.forEach(r=>{
+        const m = monthNombre(r.fecha);
+        SUPABASE_OPEN_MONTHS_COLA[m] = (SUPABASE_OPEN_MONTHS_COLA[m]||0) + 1;
+      });
+
+      renderColaAll();
+      renderColaOpenMonthsPanel();
+    }
+    return true;
+  }catch(e){
+    console.error('Error consultando Supabase (dc_datos):', e);
+    return false;
+  }
+}
+
+function renderColaOpenMonthsPanel(){
+  const wrap = document.getElementById('openMonthsWrapCola');
+  const meses = Object.keys(SUPABASE_OPEN_MONTHS_COLA);
+  if(meses.length === 0){ wrap.innerHTML = ''; return; }
+  meses.sort((a,b)=> (MES_IDX[a]||99) - (MES_IDX[b]||99));
+
+  let warningHTML = '';
+  if(meses.length > OPEN_MONTHS_WARNING){
+    warningHTML = '<p class="open-months-warning">⚠ Tenés ' + meses.length + ' meses abiertos en Supabase (recomendado hasta ' + OPEN_MONTHS_WARNING + ').</p>';
+  }
+  const rows = meses.map(m=>{
+    const yaCongelado = FROZEN_MONTHS_COLA[m] ? ' <span style="color:var(--text-muted);font-weight:400;">(ya congelado)</span>' : '';
+    return (
+      '<div class="open-month-row">' +
+        '<span class="open-month-name">' + m + yaCongelado + '</span>' +
+        '<span class="open-month-count">' + SUPABASE_OPEN_MONTHS_COLA[m] + ' filas en Supabase</span>' +
+        '<button class="close-month-btn" data-mes="' + m + '">🧊 Cerrar ' + m + '</button>' +
+      '</div>'
+    );
+  }).join('');
+  wrap.innerHTML = '<p class="open-months-title">Meses abiertos en Supabase</p>' + warningHTML + rows;
+  wrap.querySelectorAll('.close-month-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> closeColaMonth(btn.dataset.mes));
+  });
+}
+
+function closeColaMonth(mes){
+  const rowsForMonth = RAW_ROWS_COLA.filter(r => monthNombre(r.fecha) === mes);
+  if(rowsForMonth.length === 0){ alert('No hay datos cargados para ' + mes + ' todavía.'); return; }
+  const confirmMsg =
+    '¿Congelar ' + mes + ' (demanda por cola)?\n\n' +
+    'Esto va a generar y descargar un HTML nuevo con los ' + rowsForMonth.length + ' registros de ' + mes + ' guardados de forma permanente dentro del archivo.\n\n' +
+    'IMPORTANTE: esto NO borra nada de Supabase todavía. Los datos de ' + mes + ' van a seguir en la base hasta que vos le pidas explícitamente a Claude que los borre.\n\n' +
+    '¿Continuar?';
+  if(!confirm(confirmMsg)) return;
+  FROZEN_MONTHS_COLA[mes] = rowsForMonth;
+  downloadUpdatedReport();
+  dbStatusCola.innerHTML = '🧊 ' + mes + ' quedó congelado en el archivo descargado (' + rowsForMonth.length + ' filas). Sigue en Supabase hasta que pidas borrarlo.';
+}
+
+function mergeAndRefreshColaLocal(newRows, filename){
+  const key = r => r.fecha + '|' + r.cola;
+  const existingKeys = new Set(RAW_ROWS_COLA.map(key));
+  let updated=0, added=0;
+  newRows.forEach(r=>{ if(existingKeys.has(key(r))) updated++; else added++; });
+  RAW_ROWS_COLA = mergeRows(RAW_ROWS_COLA, newRows, key);
+  DATA_COLA = computeDataset(RAW_ROWS_COLA);
+  MONTHS_COLA = DATA_COLA.mesesOrder;
+  const fechasNuevas = newRows.map(r=>r.fecha).sort();
+  const ultimaFecha = fechasNuevas[fechasNuevas.length-1];
+  currentMonthCola = monthNombre(ultimaFecha);
+  currentDayCola = ultimaFecha;
+  renderColaAll();
+  downloadBtn.disabled = false;
+  const todasFechas = RAW_ROWS_COLA.map(r=>r.fecha).sort();
+  dbStatusCola.innerHTML = 'Cargado localmente <strong>' + filename + '</strong>: ' + added + ' filas nuevas, ' + updated +
+    ' actualizadas. Datos desde ' + dayLabel(todasFechas[0]) + ' hasta ' + dayLabel(todasFechas[todasFechas.length-1]) + '.';
+}
+
+async function syncColaToSupabase(newRows, filename){
+  if(!supabaseClient){ mergeAndRefreshColaLocal(newRows, filename); return; }
+  dbStatusCola.textContent = 'Guardando ' + filename + ' en Supabase...';
+  const key = r => r.fecha + '|' + r.cola;
+  const existingKeys = new Set(RAW_ROWS_COLA.map(key));
+  let added=0, updated=0;
+  newRows.forEach(r=>{ if(existingKeys.has(key(r))) updated++; else added++; });
+  try{
+    const { error: upsertError } = await supabaseClient.from('dc_datos').upsert(newRows, { onConflict: 'fecha,cola' });
+    if(upsertError) throw upsertError;
+    await supabaseClient.from('dc_actualizaciones').insert({ nombre_archivo: filename, filas_nuevas: added, filas_actualizadas: updated, estado: 'OK' });
+    const ok = await loadColaFromSupabase();
+    downloadBtn.disabled = false;
+    if(ok){
+      const todasFechas = RAW_ROWS_COLA.map(r=>r.fecha).sort();
+      dbStatusCola.innerHTML = 'Guardado en Supabase desde <strong>' + filename + '</strong>: ' + added + ' filas nuevas, ' + updated +
+        ' actualizadas. Datos desde ' + dayLabel(todasFechas[0]) + ' hasta ' + dayLabel(todasFechas[todasFechas.length-1]) + '.';
+    }else{
+      mergeAndRefreshColaLocal(newRows, filename);
+    }
+  }catch(err){
+    console.error(err);
+    try{
+      await supabaseClient.from('dc_actualizaciones').insert({ nombre_archivo: filename, filas_nuevas: added, filas_actualizadas: updated, estado: 'ERROR', mensaje: String(err.message || err) });
+    }catch(e2){ console.error(e2); }
+    dbStatusCola.innerHTML = '<span style="color:var(--danger);">Error al guardar en Supabase: ' + (err.message||err) + '. Se aplicó solo en este navegador.</span>';
+    mergeAndRefreshColaLocal(newRows, filename);
+  }
+}
+
+function handleColaFile(file){
+  dbStatusCola.textContent = 'Procesando ' + file.name + '...';
+  readSheetRows(file, (json)=>{
+    const newRows = [];
+    json.forEach(row=>{
+      const cola = row['Cola'];
+      if(!COLAS.includes(cola)) return;
+      const fechaRaw = row['Fecha'];
+      let fecha = null;
+      if(typeof fechaRaw === 'number') fecha = excelSerialToDateStr(fechaRaw);
+      else if(fechaRaw instanceof Date) fecha = fechaRaw.toISOString().slice(0,10);
+      else if(typeof fechaRaw === 'string') fecha = fechaRaw.slice(0,10);
+      if(!fecha) return;
+      newRows.push({
+        fecha: fecha, cola: cola,
+        nuevos: Number(row['Nuevos'])||0,
+        encolados: Number(row['Encolados'])||0,
+        descartados: Number(row['Descartados'])||0,
+        casos_cerrados: Number(row['Casos cerrados'])||0,
+        vencidos: Number(row['Vencidos'])||0,
+        asignados_agente: Number(row['Asignados a agente'])||0,
+        asa_sec: toSecFromCell(row['ASA']),
+        tmo_sec: toSecFromCell(row['TMO']),
+      });
+    });
+    if(newRows.length===0){
+      dbStatusCola.innerHTML = '<span style="color:var(--danger);">No se encontraron filas de las colas esperadas en ese archivo.</span>';
+      return;
+    }
+    syncColaToSupabase(newRows, file.name);
+  }, (err)=>{
+    dbStatusCola.innerHTML = '<span style="color:var(--danger);">Error al leer el archivo: ' + (err.message||err) + '</span>';
+  });
+}
+
+/* ========================================================================
+   PÁGINA 2 y 3: DEMANDA POR INTERVALO
+   ======================================================================== */
+let FROZEN_MONTHS_INTERVALO = /*FROZEN_INTERVALO_START*/ {} /*FROZEN_INTERVALO_END*/;
+let RAW_ROWS_INTERVALO = flattenFrozen(FROZEN_MONTHS_INTERVALO);
+let SUPABASE_OPEN_MONTHS_INTERVALO = {};
+
+function computeIntervalDataset(rows){
+  const sorted = rows.slice().sort((a,b)=> a.fecha<b.fecha?-1:(a.fecha>b.fecha?1:0));
+  const mesesOrder = [];
+  sorted.forEach(r=>{ const mn=monthNombre(r.fecha); if(!mesesOrder.includes(mn)) mesesOrder.push(mn); });
+  const colasPorMes = {};
+  mesesOrder.forEach(mes=>{
+    const subRows = sorted.filter(r=>monthNombre(r.fecha)===mes);
+    colasPorMes[mes] = Array.from(new Set(subRows.map(r=>r.cola))).sort();
+  });
+  return {mesesOrder, colasPorMes};
+}
+
+let INTERVAL_DATA = computeIntervalDataset(RAW_ROWS_INTERVALO);
+let MONTHS_INTERVALO = INTERVAL_DATA.mesesOrder;
+let currentMonthIntervalo = MONTHS_INTERVALO.length ? MONTHS_INTERVALO[MONTHS_INTERVALO.length-1] : null;
+let currentColaIntervalo = null;
+let currentDayIntervalo = null; // se resuelve al primer día disponible del mes al renderizar
+
+function filterIntervalRows(mes, cola, dia){
+  return RAW_ROWS_INTERVALO.filter(r => monthNombre(r.fecha)===mes
+    && (cola==='__ALL__' || r.cola===cola)
+    && (!dia || dia==='__AVG__' || r.fecha===dia));
+}
+
+function renderCurva(){
+  const rows = filterIntervalRows(currentMonthIntervalo, currentColaIntervalo, currentDayIntervalo);
+  const esDiaPuntual = currentDayIntervalo && currentDayIntervalo!=='__AVG__';
+  document.getElementById('curvaSummary').textContent = esDiaPuntual
+    ? 'Curva del ' + dayLabel(currentDayIntervalo) + ' (valores reales por franja de 30 min)'
+    : 'Curva por día (volumen promedio por franja de 30 min)';
+  const porIntervalo = {};
+  rows.forEach(r=>{
+    if(!porIntervalo[r.intervalo]) porIntervalo[r.intervalo] = {suma:0, dias:new Set()};
+    porIntervalo[r.intervalo].suma += r.nuevos;
+    porIntervalo[r.intervalo].dias.add(r.fecha);
+  });
+  const intervalos = Object.keys(porIntervalo).sort();
+  if(intervalos.length===0){
+    document.getElementById('curvaWrap').innerHTML = '<div class="empty-state">Sin datos.</div>';
+    return;
+  }
+  const data = intervalos.map(iv=>({ intervalo: iv, promedio: porIntervalo[iv].suma / porIntervalo[iv].dias.size }));
+  const max = Math.max(...data.map(d=>d.promedio), 1);
+  const bars = data.map(d=>{
+    const pct = Math.max((d.promedio/max*100), 1).toFixed(1);
+    const hh = d.intervalo.slice(0,5);
+    const mostrarLabel = d.intervalo.endsWith(':00:00');
+    return '<div class="curve-bar-wrap" title="' + hh + ': ' + Math.round(d.promedio) + ' mensajes' + (esDiaPuntual ? '' : ' promedio') + '">' +
+      '<div class="curve-bar" style="height:' + pct + '%"></div>' +
+      (mostrarLabel ? '<span class="curve-label">' + hh + '</span>' : '<span class="curve-label"></span>') +
+    '</div>';
+  }).join('');
+  document.getElementById('curvaWrap').innerHTML = '<div class="curve-chart">' + bars + '</div>';
+}
+
+function renderHeatmap(){
+  const rows = filterIntervalRows(currentMonthIntervalo, currentColaIntervalo, null);
+  if(rows.length===0){
+    document.getElementById('heatmapWrap').innerHTML = '<div class="empty-state">Sin datos.</div>';
+    return;
+  }
+  const matrix = Array.from({length:7}, ()=> Array.from({length:24}, ()=> ({suma:0, dias:new Set()})));
+  rows.forEach(r=>{
+    const d = new Date(r.fecha+'T00:00:00');
+    const dow = d.getDay();
+    const hora = parseInt(r.intervalo.slice(0,2),10);
+    matrix[dow][hora].suma += r.nuevos;
+    matrix[dow][hora].dias.add(r.fecha);
+  });
+  let max = 1;
+  const avgMatrix = matrix.map(row=> row.map(cell=>{
+    const avg = cell.dias.size>0 ? cell.suma/cell.dias.size : 0;
+    if(avg>max) max=avg;
+    return avg;
+  }));
+  const dowLabels = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const order = [1,2,3,4,5,6,0];
+  let html = '<table class="heatmap-table"><thead><tr><th></th>';
+  for(let h=0; h<24; h++){ html += '<th>' + h + '</th>'; }
+  html += '</tr></thead><tbody>';
+  order.forEach(dow=>{
+    html += '<tr><td class="heatmap-daylabel">' + dowLabels[dow] + '</td>';
+    for(let h=0; h<24; h++){
+      const v = avgMatrix[dow][h];
+      const intensity = v/max;
+      const bg = 'rgba(42,95,214,' + (intensity*0.85+0.05).toFixed(2) + ')';
+      const textColor = intensity>0.55 ? '#fff' : 'var(--text)';
+      html += '<td style="background:' + bg + ';color:' + textColor + ';" title="' + dowLabels[dow] + ' ' + h + ':00 — promedio ' + Math.round(v) + '">' + Math.round(v) + '</td>';
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('heatmapWrap').innerHTML = html;
+}
+
+function renderAsaTmo(){
+  const rows = filterIntervalRows(currentMonthIntervalo, currentColaIntervalo, currentDayIntervalo);
+  const esDiaPuntual = currentDayIntervalo && currentDayIntervalo!=='__AVG__';
+  document.getElementById('asaTmoSummary').textContent = esDiaPuntual
+    ? 'ASA y TMO del ' + dayLabel(currentDayIntervalo) + ' por franja horaria'
+    : 'ASA y TMO por franja horaria (promedio del mes)';
+  if(rows.length===0){
+    document.getElementById('asaTmoWrap').innerHTML = '<div class="empty-state">Sin datos.</div>';
+    return;
+  }
+  const porHora = {};
+  rows.forEach(r=>{
+    const hora = parseInt(r.intervalo.slice(0,2),10);
+    if(!porHora[hora]) porHora[hora] = {asaSum:0, asaCount:0, tmoSum:0, tmoCount:0};
+    if(r.asa_sec!==null && r.asa_sec!==undefined){ porHora[hora].asaSum += r.asa_sec; porHora[hora].asaCount++; }
+    if(r.tmo_sec!==null && r.tmo_sec!==undefined){ porHora[hora].tmoSum += r.tmo_sec; porHora[hora].tmoCount++; }
+  });
+  let rowsHtml = '';
+  for(let h=0; h<24; h++){
+    const d = porHora[h] || {asaSum:0,asaCount:0,tmoSum:0,tmoCount:0};
+    const asaAvg = d.asaCount>0 ? Math.round(d.asaSum/d.asaCount) : null;
+    const tmoAvg = d.tmoCount>0 ? Math.round(d.tmoSum/d.tmoCount) : null;
+    rowsHtml += '<tr><td>' + String(h).padStart(2,'0') + ':00</td><td class="num">' + fmtTime(asaAvg) + '</td><td class="num">' + fmtTime(tmoAvg) + '</td></tr>';
+  }
+  document.getElementById('asaTmoWrap').innerHTML =
+    '<table><thead><tr><th>Hora</th><th class="num">' + (esDiaPuntual ? 'ASA' : 'ASA promedio') + '</th><th class="num">' + (esDiaPuntual ? 'TMO' : 'TMO promedio') + '</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>';
+}
+
+function renderIntervaloDayPicker(){
+  const wrap = document.getElementById('intervaloDayPicker');
+  const dias = Array.from(new Set(
+    RAW_ROWS_INTERVALO.filter(r=>monthNombre(r.fecha)===currentMonthIntervalo).map(r=>r.fecha)
+  )).sort();
+  if(!currentDayIntervalo || (currentDayIntervalo!=='__AVG__' && !dias.includes(currentDayIntervalo))){
+    currentDayIntervalo = dias.length ? dias[0] : '__AVG__';
+  }
+  let html = '<button class="day-pill' + (currentDayIntervalo==='__AVG__' ? ' active' : '') + '" data-day="__AVG__">Promedio del mes</button>';
+  html += dias.map(f=>{
+    const d = new Date(f + 'T00:00:00');
+    const isWeekend = (d.getDay()===0 || d.getDay()===6);
+    const activeCls = f===currentDayIntervalo ? ' active' : '';
+    const weekendCls = isWeekend ? ' weekend' : '';
+    return '<button class="day-pill' + activeCls + weekendCls + '" data-day="' + f + '">' + dayLabel(f) + '</button>';
+  }).join('');
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.day-pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentDayIntervalo = btn.dataset.day;
+      renderIntervaloDayPicker();
+      renderCurva();
+      renderAsaTmo();
+    });
+  });
+}
+
+function renderIntervaloColaSelector(){
+  const sel = document.getElementById('intervaloColaSelect');
+  const colas = INTERVAL_DATA.colasPorMes[currentMonthIntervalo] || [];
+  if(!currentColaIntervalo || !colas.includes(currentColaIntervalo)){
+    currentColaIntervalo = colas.includes('Whatsapp') ? 'Whatsapp' : (colas.length ? colas[0] : '__ALL__');
+  }
+  let options = '<option value="__ALL__">Todas las colas</option>';
+  options += colas.map(c => '<option value="' + c + '"' + (c===currentColaIntervalo ? ' selected' : '') + '>' + c + '</option>').join('');
+  sel.innerHTML = options;
+  sel.onchange = ()=>{ currentColaIntervalo = sel.value; renderIntervaloContent(); };
+}
+
+function renderIntervaloTabs(){
+  const wrap = document.getElementById('monthTabsIntervalo');
+  wrap.innerHTML = MONTHS_INTERVALO.map(m =>
+    '<button class="month-tab' + (m===currentMonthIntervalo ? ' active' : '') + '" data-month="' + m + '">' + m + '</button>'
+  ).join('');
+  wrap.querySelectorAll('.month-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentMonthIntervalo = btn.dataset.month;
+      currentDayIntervalo = null;
+      renderIntervaloColaSelector();
+      renderIntervaloContent();
+    });
+  });
+}
+
+function renderIntervaloContent(){
+  if(!currentMonthIntervalo){
+    document.getElementById('curvaWrap').innerHTML = '<div class="empty-state">Todavía no hay datos de intervalo. Cargalos desde la pestaña "Base de datos".</div>';
+    document.getElementById('heatmapWrap').innerHTML = '';
+    document.getElementById('asaTmoWrap').innerHTML = '';
+    document.getElementById('intervaloDayPicker').innerHTML = '';
+    return;
+  }
+  renderIntervaloDayPicker();
+  renderCurva();
+  renderHeatmap();
+  renderAsaTmo();
+}
+
+function renderIntervaloAll(){
+  renderIntervaloTabs();
+  renderIntervaloColaSelector();
+  renderIntervaloContent();
+}
+
+async function loadIntervaloFromSupabase(){
+  if(!supabaseClient) return false;
+  try{
+    const data = await fetchAllRows('di_datos', 'fecha,intervalo,cola,nuevos,encolados,descartados,casos_cerrados,vencidos,asignados_agente,asa_sec,tmo_sec');
+    if(data && data.length>0){
+      RAW_ROWS_INTERVALO = mergeRows(RAW_ROWS_INTERVALO, data, r=>r.fecha+'|'+r.intervalo+'|'+r.cola);
+      INTERVAL_DATA = computeIntervalDataset(RAW_ROWS_INTERVALO);
+      MONTHS_INTERVALO = INTERVAL_DATA.mesesOrder;
+      if(!currentMonthIntervalo || !MONTHS_INTERVALO.includes(currentMonthIntervalo)){
+        currentMonthIntervalo = MONTHS_INTERVALO[MONTHS_INTERVALO.length-1];
+      }
+      renderIntervaloAll();
+
+      SUPABASE_OPEN_MONTHS_INTERVALO = {};
+      data.forEach(r=>{
+        const m = monthNombre(r.fecha);
+        SUPABASE_OPEN_MONTHS_INTERVALO[m] = (SUPABASE_OPEN_MONTHS_INTERVALO[m]||0) + 1;
+      });
+      renderIntervaloOpenMonthsPanel();
+    }
+    return true;
+  }catch(e){
+    console.error('Error consultando Supabase (di_datos):', e);
+    return false;
+  }
+}
+
+function renderIntervaloOpenMonthsPanel(){
+  const wrap = document.getElementById('openMonthsWrapIntervalo');
+  const meses = Object.keys(SUPABASE_OPEN_MONTHS_INTERVALO);
+  if(meses.length === 0){ wrap.innerHTML = ''; return; }
+  meses.sort((a,b)=> (MES_IDX[a]||99) - (MES_IDX[b]||99));
+  let warningHTML = '';
+  if(meses.length > OPEN_MONTHS_WARNING){
+    warningHTML = '<p class="open-months-warning">⚠ Tenés ' + meses.length + ' meses abiertos en Supabase (recomendado hasta ' + OPEN_MONTHS_WARNING + '). El detalle por intervalo pesa mucho más que el acumulado diario — conviene congelar los meses viejos con más frecuencia acá.</p>';
+  }
+  const rows = meses.map(m=>{
+    const yaCongelado = FROZEN_MONTHS_INTERVALO[m] ? ' <span style="color:var(--text-muted);font-weight:400;">(ya congelado)</span>' : '';
+    return (
+      '<div class="open-month-row">' +
+        '<span class="open-month-name">' + m + yaCongelado + '</span>' +
+        '<span class="open-month-count">' + SUPABASE_OPEN_MONTHS_INTERVALO[m] + ' filas en Supabase</span>' +
+        '<button class="close-month-btn" data-mes="' + m + '">🧊 Cerrar ' + m + '</button>' +
+      '</div>'
+    );
+  }).join('');
+  wrap.innerHTML = '<p class="open-months-title">Meses abiertos en Supabase</p>' + warningHTML + rows;
+  wrap.querySelectorAll('.close-month-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> closeIntervaloMonth(btn.dataset.mes));
+  });
+}
+
+function closeIntervaloMonth(mes){
+  const rowsForMonth = RAW_ROWS_INTERVALO.filter(r => monthNombre(r.fecha) === mes);
+  if(rowsForMonth.length === 0){ alert('No hay datos cargados para ' + mes + ' todavía.'); return; }
+  const confirmMsg =
+    '¿Congelar ' + mes + ' (demanda por intervalo)?\n\n' +
+    'Esto va a generar y descargar un HTML nuevo con los ' + rowsForMonth.length + ' registros de ' + mes + ' guardados de forma permanente dentro del archivo.\n\n' +
+    'IMPORTANTE: esto NO borra nada de Supabase todavía. Los datos de ' + mes + ' van a seguir en la base hasta que vos le pidas explícitamente a Claude que los borre.\n\n' +
+    '¿Continuar?';
+  if(!confirm(confirmMsg)) return;
+  FROZEN_MONTHS_INTERVALO[mes] = rowsForMonth;
+  downloadUpdatedReport();
+  dbStatusIntervalo.innerHTML = '🧊 ' + mes + ' quedó congelado en el archivo descargado (' + rowsForMonth.length + ' filas). Sigue en Supabase hasta que pidas borrarlo.';
+}
+
+function mergeAndRefreshIntervaloLocal(newRows, filename){
+  const key = r => r.fecha + '|' + r.intervalo + '|' + r.cola;
+  const existingKeys = new Set(RAW_ROWS_INTERVALO.map(key));
+  let updated=0, added=0;
+  newRows.forEach(r=>{ if(existingKeys.has(key(r))) updated++; else added++; });
+  RAW_ROWS_INTERVALO = mergeRows(RAW_ROWS_INTERVALO, newRows, key);
+  INTERVAL_DATA = computeIntervalDataset(RAW_ROWS_INTERVALO);
+  MONTHS_INTERVALO = INTERVAL_DATA.mesesOrder;
+  const fechasNuevas = newRows.map(r=>r.fecha).sort();
+  currentMonthIntervalo = monthNombre(fechasNuevas[fechasNuevas.length-1]);
+  renderIntervaloAll();
+  downloadBtn.disabled = false;
+  dbStatusIntervalo.innerHTML = 'Cargado localmente <strong>' + filename + '</strong>: ' + added + ' filas nuevas, ' + updated + ' actualizadas.';
+}
+
+async function syncIntervaloToSupabase(newRows, filename){
+  if(!supabaseClient){ mergeAndRefreshIntervaloLocal(newRows, filename); return; }
+  dbStatusIntervalo.textContent = 'Guardando ' + filename + ' en Supabase...';
+  const key = r => r.fecha + '|' + r.intervalo + '|' + r.cola;
+  const existingKeys = new Set(RAW_ROWS_INTERVALO.map(key));
+  let added=0, updated=0;
+  newRows.forEach(r=>{ if(existingKeys.has(key(r))) updated++; else added++; });
+  try{
+    const { error: upsertError } = await supabaseClient.from('di_datos').upsert(newRows, { onConflict: 'fecha,intervalo,cola' });
+    if(upsertError) throw upsertError;
+    await supabaseClient.from('di_actualizaciones').insert({ nombre_archivo: filename, filas_nuevas: added, filas_actualizadas: updated, estado: 'OK' });
+    const ok = await loadIntervaloFromSupabase();
+    downloadBtn.disabled = false;
+    if(ok){
+      dbStatusIntervalo.innerHTML = 'Guardado en Supabase desde <strong>' + filename + '</strong>: ' + added + ' filas nuevas, ' + updated + ' actualizadas.';
+    }else{
+      mergeAndRefreshIntervaloLocal(newRows, filename);
+    }
+  }catch(err){
+    console.error(err);
+    try{
+      await supabaseClient.from('di_actualizaciones').insert({ nombre_archivo: filename, filas_nuevas: added, filas_actualizadas: updated, estado: 'ERROR', mensaje: String(err.message || err) });
+    }catch(e2){ console.error(e2); }
+    dbStatusIntervalo.innerHTML = '<span style="color:var(--danger);">Error al guardar en Supabase: ' + (err.message||err) + '. Se aplicó solo en este navegador.</span>';
+    mergeAndRefreshIntervaloLocal(newRows, filename);
+  }
+}
+
+function handleIntervaloFile(file){
+  dbStatusIntervalo.textContent = 'Procesando ' + file.name + '...';
+  readSheetRows(file, (json)=>{
+    const newRows = [];
+    json.forEach(row=>{
+      const cola = row['Cola'];
+      if(!COLAS.includes(cola)) return;
+      const fechaRaw = row['Fecha'];
+      let fecha = null;
+      if(typeof fechaRaw === 'number') fecha = excelSerialToDateStr(fechaRaw);
+      else if(fechaRaw instanceof Date) fecha = fechaRaw.toISOString().slice(0,10);
+      else if(typeof fechaRaw === 'string') fecha = fechaRaw.slice(0,10);
+      if(!fecha) return;
+      const intervalo = toTimeStringFromCell(row['Intervalo']);
+      if(!intervalo) return;
+      newRows.push({
+        fecha: fecha, intervalo: intervalo, cola: cola,
+        nuevos: Number(row['Nuevos'])||0,
+        encolados: Number(row['Encolados'])||0,
+        descartados: Number(row['Descartados'])||0,
+        casos_cerrados: Number(row['Casos cerrados'])||0,
+        vencidos: Number(row['Vencidos'])||0,
+        asignados_agente: Number(row['Asignados a agente'])||0,
+        asa_sec: toSecFromCell(row['ASA']),
+        tmo_sec: toSecFromCell(row['TMO']),
+      });
+    });
+    if(newRows.length===0){
+      dbStatusIntervalo.innerHTML = '<span style="color:var(--danger);">No se encontraron filas válidas (revisá que el archivo tenga columna "Intervalo").</span>';
+      return;
+    }
+    syncIntervaloToSupabase(newRows, file.name);
+  }, (err)=>{
+    dbStatusIntervalo.innerHTML = '<span style="color:var(--danger);">Error al leer el archivo: ' + (err.message||err) + '</span>';
+  });
+}
+
+/* ========================================================================
+   NAVEGACIÓN ENTRE PESTAÑAS PRINCIPALES
+   ======================================================================== */
+function showPage(page){
+  document.getElementById('pageCola').style.display = page==='cola' ? '' : 'none';
+  document.getElementById('pageIntervalo').style.display = page==='intervalo' ? '' : 'none';
+  document.getElementById('pageBaseDatos').style.display = page==='basedatos' ? '' : 'none';
+  document.querySelectorAll('.main-tab').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.page===page);
+  });
+}
+document.querySelectorAll('.main-tab').forEach(btn=>{
+  btn.addEventListener('click', ()=> showPage(btn.dataset.page));
+});
+
+/* ========================================================================
+   DRAG AND DROP (ambos datasets)
+   ======================================================================== */
+const dropzoneCola = document.getElementById('dropzoneCola');
+const fileInputCola = document.getElementById('fileInputCola');
+const dbStatusCola = document.getElementById('dbStatusCola');
+const dropzoneIntervalo = document.getElementById('dropzoneIntervalo');
+const fileInputIntervalo = document.getElementById('fileInputIntervalo');
+const dbStatusIntervalo = document.getElementById('dbStatusIntervalo');
+const downloadBtn = document.getElementById('downloadBtn');
+
+function wireDropzone(dropEl, inputEl, handler){
+  dropEl.addEventListener('click', ()=> inputEl.click());
+  dropEl.addEventListener('dragover', e=>{ e.preventDefault(); dropEl.classList.add('dragover'); });
+  dropEl.addEventListener('dragleave', ()=> dropEl.classList.remove('dragover'));
+  dropEl.addEventListener('drop', e=>{
+    e.preventDefault();
+    dropEl.classList.remove('dragover');
+    if(e.dataTransfer.files.length>0) handler(e.dataTransfer.files[0]);
+  });
+  inputEl.addEventListener('change', e=>{
+    if(e.target.files.length>0) handler(e.target.files[0]);
+  });
+}
+wireDropzone(dropzoneCola, fileInputCola, handleColaFile);
+wireDropzone(dropzoneIntervalo, fileInputIntervalo, handleIntervaloFile);
+
+function downloadUpdatedReport(){
+  const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const frozenColaJson = JSON.stringify(FROZEN_MONTHS_COLA);
+  const frozenIntervaloJson = JSON.stringify(FROZEN_MONTHS_INTERVALO);
+  let updatedHtml = fullHtml.replace(
+    /\/\*FROZEN_START\*\/[\s\S]*?\/\*FROZEN_END\*\//,
+    '/*FROZEN_START*/ ' + frozenColaJson + ' /*FROZEN_END*/'
+  );
+  updatedHtml = updatedHtml.replace(
+    /\/\*FROZEN_INTERVALO_START\*\/[\s\S]*?\/\*FROZEN_INTERVALO_END\*\//,
+    '/*FROZEN_INTERVALO_START*/ ' + frozenIntervaloJson + ' /*FROZEN_INTERVALO_END*/'
+  );
+  const blob = new Blob([updatedHtml], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const hoy = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = 'demanda_por_cola_' + hoy + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+downloadBtn.addEventListener('click', downloadUpdatedReport);
+
+/* ========================================================================
+   ARRANQUE
+   ======================================================================== */
+renderColaAll();
+renderIntervaloAll();
+
+dbStatusCola.textContent = dbStatusCola.textContent + ' Conectando con Supabase...';
+loadColaFromSupabase().then(ok=>{
+  if(ok){
+    const todasFechas = RAW_ROWS_COLA.map(r=>r.fecha).sort();
+    dbStatusCola.innerHTML = 'Conectado a Supabase. Datos desde ' + dayLabel(todasFechas[0]) + ' hasta ' + dayLabel(todasFechas[todasFechas.length-1]) + ' (se actualiza automáticamente para todo el equipo).';
+    downloadBtn.disabled = false;
+  }else{
+    dbStatusCola.textContent = dbStatusCola.textContent.replace(' Conectando con Supabase...', ' (sin conexión a Supabase, mostrando snapshot local)');
+  }
+});
+
+loadIntervaloFromSupabase().then(ok=>{
+  if(ok && RAW_ROWS_INTERVALO.length>0){
+    downloadBtn.disabled = false;
+  }else if(!ok){
+    dbStatusIntervalo.textContent = dbStatusIntervalo.textContent + ' (sin conexión a Supabase por ahora)';
+  }
+});
+</script>
+</body>
+</html>
